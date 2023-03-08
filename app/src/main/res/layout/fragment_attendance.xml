@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:background="@color/dark"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/outerConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.AttendanceFragment">
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/over_lay" />
+
+
+        <LinearLayout
+            android:background="@drawable/background_dashboard"
+            android:padding="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Absensi"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TableLayout
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <androidx.cardview.widget.CardView
+                        android:layout_marginEnd="20dp"
+                        android:backgroundTint="#C1F2CF"
+                        app:cardCornerRadius="18dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1">
+                        <LinearLayout
+                            android:layout_marginTop="25dp"
+                            android:layout_marginBottom="25dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:fontFamily="@font/roboto_bold"
+                                android:id="@+id/hadir"
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:backgroundTint="#FFBCC8"
+                        app:cardCornerRadius="18dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2" >
+                        <LinearLayout
+                            android:layout_marginTop="25dp"
+                            android:layout_marginBottom="25dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/alpa"
+                                android:fontFamily="@font/roboto_bold"
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_marginStart="20dp"
+                        android:backgroundTint="#B8DCFA"
+                        app:cardCornerRadius="18dp"
+                        android:padding="5dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_column="3" >
+                        <LinearLayout
+                            android:layout_marginTop="25dp"
+                            android:layout_marginBottom="25dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/izin"
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:fontFamily="@font/roboto_bold"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow>
+                    <TextView
+                        android:layout_marginEnd="20dp"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Hadir"
+                        android:textSize="10sp"
+                        />
+                    <TextView
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:textAlignment="center"
+                        android:layout_gravity="center"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Alpa"
+                        android:textSize="10sp"
+                        />
+                    <TextView
+                        android:layout_marginStart="20dp"
+                        android:textAlignment="center"
+                        android:layout_gravity="center"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Izin"
+                        android:textSize="10sp"
+                        />
+                </TableRow>
+            </TableLayout>
+            <RelativeLayout
+
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Riwayat Absen"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_marginEnd="5dp"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/permission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_toStartOf="@+id/arrow_right"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/arialbd"
+                    android:text="Ajukan Izin"
+                    android:textColor="@color/red_font"
+                    android:textSize="12sp" />
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/arrow_right"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:srcCompat="@drawable/ic_arrow_right"
+                    android:layout_marginTop="12dp"
+                    android:layout_alignParentEnd="true"
+                    />
+            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rec"
+                tools:listitem="@layout/attendance_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+            </androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                android:visibility="invisible"
+                android:fontFamily="@font/arial"
+                android:layout_marginTop="100dp"
+                android:id="@+id/inHide"
+                android:textSize="10sp"
+                android:textAlignment="center"
+                android:textColor="#4B000000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Belum ada data"
+                />
+        </LinearLayout>
+    </LinearLayout>

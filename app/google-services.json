@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "350896525111",
+    "project_id": "aptikma-remake",
+    "storage_bucket": "aptikma-remake.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:350896525111:android:5c773124af796cde05d4b2",
+        "android_client_info": {
+          "package_name": "com.example.aptikma_remake"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "350896525111-10jv5fnufh3kp49p7fukp91t6sql2jj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw8awMiAM1MqNPX-7mEZ7iD-0VDVAMbRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "350896525111-10jv5fnufh3kp49p7fukp91t6sql2jj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

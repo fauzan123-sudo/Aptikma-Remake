@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_salaryFragment"
+            app:destination="@id/salaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/salaryFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.SalaryFragment"
+        android:label="fragment_sallary"
+        tools:layout="@layout/fragment_sallary" >
+        <action
+            android:id="@+id/action_salaryFragment_to_scanFragment"
+            app:destination="@id/scanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" >
+        <action
+            android:id="@+id/action_scanFragment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
+        <action
+            android:id="@+id/action_scanFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_scanFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.AttendanceFragment"
+        android:label="fragment_attendance"
+        tools:layout="@layout/fragment_attendance" >
+        <action
+            android:id="@+id/action_attendanceFragment_to_itemListDialogFragment"
+            app:destination="@id/itemListDialogFragment" />
+        <action
+            android:id="@+id/action_attendanceFragment_to_bottomSheetAttendance"
+            app:destination="@id/bottomSheetAttendance" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.NewsFragment"
+        android:label="fragment_news"
+        tools:layout="@layout/fragment_news" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <dialog
+        android:id="@+id/bottomSheetAttendance"
+        android:name="com.example.aptikma_remake.ui.fragment.BottomSheetAttendance"
+        android:label="fragment_bottom_sheet_attendance"
+        tools:layout="@layout/fragment_bottom_sheet_attendance" >
+        <action
+            android:id="@+id/action_bottomSheetAttendance_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/itemListDialogFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.ItemListDialogFragment"
+        android:label="fragment_item_list_dialog_list_dialog"
+        tools:layout="@layout/fragment_item_list_dialog_list_dialog" />
+</navigation>

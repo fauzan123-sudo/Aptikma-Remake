@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:background="@color/dark"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.Login">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_bg_oracle"
+        />
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_login_logo"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/acme"
+            android:gravity="center"
+            android:text="Login Your Account"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/arial"
+            android:gravity="center"
+            android:text="be a good and polite employee"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            />
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/hiddenText"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:background="#F44848"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_dangerous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <TextView
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Maaf Username atau Password anda salah !!"
+                />
+        </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            app:boxBackgroundMode="none"
+            app:boxBackgroundColor="@color/red_font"
+            app:boxStrokeColor="@color/red_font"
+            app:hintTextColor="@color/red_font"
+            android:textColorHint="@color/white_trans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:drawablePadding="20dp"
+                android:id="@+id/username"
+                android:imeOptions="actionGo"
+                android:inputType="text"
+                android:singleLine="true"
+                android:letterSpacing="0.1"
+                android:fontFamily="@font/arial"
+                android:backgroundTint="@color/white"
+                android:drawableTint="@color/white_trans"
+                android:drawableStart="@drawable/ic_user_icon"
+                android:layout_marginTop="80dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:textColor="@color/red_font"
+                android:textColorHint="@color/white_trans"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:paddingBottom="20dp"
+                android:textStyle="bold"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:visibility="gone"
+            android:id="@+id/progress_bar"
+            android:indeterminate="true"
+            style="@style/SpinKitView.ThreeBounce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/black" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginTop="20dp"
+            android:imeOptions="actionDone"
+            app:passwordToggleTint="@color/white_trans"
+            app:passwordToggleEnabled="true"
+
+            app:boxBackgroundMode="none"
+            app:boxBackgroundColor="@color/red_font"
+            app:boxStrokeColor="@color/red_font"
+            app:hintTextColor="@color/red_font"
+            android:textColorHint="@color/white_trans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:drawableTint="@color/white_trans"
+                android:imeOptions="actionDone"
+                android:drawablePadding="20dp"
+                android:inputType="text"
+                android:singleLine="true"
+                android:letterSpacing="0.1"
+                android:fontFamily="@font/arial"
+                android:backgroundTint="@color/white"
+                android:drawableStart="@drawable/ic_lock"
+                android:layout_marginTop="80dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:textColor="@color/red_font"
+                android:textColorHint="@color/white_trans"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:paddingBottom="20dp"
+                android:textStyle="bold"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/login"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:layout_marginTop="40dp"
+            android:textAllCaps="false"
+            android:text="Login"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:background="@drawable/circle_red_button"
+            android:backgroundTint="#F95572"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:fontFamily="@font/arial"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="30dp"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt1"
+        android:textColor="#96FFFFFF"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WENGKY 1.0.1"
+        />
+
+</RelativeLayout>

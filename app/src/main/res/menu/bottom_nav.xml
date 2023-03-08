@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:title="Home"
+        android:icon="@drawable/ic_ring"
+        />
+    <item
+        android:id="@+id/attendanceFragment"
+        android:title="Absen"
+        android:icon="@drawable/ic_readme"
+        />
+    <item
+        android:id="@+id/scanFragment"
+        android:title="SCAN" />
+    <item
+        android:id="@+id/salaryFragment"
+        android:title="Gaji"
+        android:icon="@drawable/ic_dollar"
+        />
+    <item
+        android:id="@+id/profileFragment"
+        android:title="Profile"
+        android:icon="@drawable/ic_girl"
+        />
+</menu>

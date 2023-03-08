@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Aptikma-Remake</string>
+    <string name="failed_connect">Failed Connect</string>
+    <string name="bad_connection">Bad Connection</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="information">Jika ada data yang tidak sesui dengan data diri anda, silahkan hubungi Admin. Terima Kasih</string>
+</resources>

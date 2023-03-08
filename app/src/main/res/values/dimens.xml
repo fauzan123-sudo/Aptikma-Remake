@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<resources>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
+
+    <dimen name="activeBottomNav" xmlns:tools="http://schemas.android.com/tools" tools:override="true" >10sp</dimen>
+</resources>

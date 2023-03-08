@@ -1,0 +1,22 @@
+<vector android:autoMirrored="true"
+    android:height="20dp"
+    android:viewportHeight="24"
+    android:viewportWidth="24"
+    android:width="20dp"
+    android:tint="@color/red_font"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+    android:pivotX="17"
+    android:pivotY="20"
+    android:scaleX="2.0"
+    android:scaleY="2.0"
+    android:translateY="8">
+
+
+        <path
+            android:fillColor="@android:color/white"
+            android:pathData="M8.59,16.59L13.17,12 8.59,7.41 10,6l6,6 -6,6 -1.41,-1.41 z"/>
+
+    </group>
+
+</vector>

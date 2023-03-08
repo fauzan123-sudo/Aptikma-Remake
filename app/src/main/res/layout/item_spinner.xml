@@ -1,0 +1,11 @@
+<TextView
+    android:layout_margin="10dp"
+    android:id="@+id/permissions"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@color/black"
+    android:textSize="14sp"
+    android:text="saya sedang sakit sekarang ya "
+    android:textAlignment="textEnd"
+    android:textStyle="bold"/>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    app:cardCornerRadius="0dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:padding="5dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_marginStart="5dp"
+            android:id="@+id/ly_left"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:gravity="center_vertical"
+                android:id="@+id/icon_girl_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_toRightOf="@id/ly_left"
+            android:id="@+id/ly_right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:fontFamily="@font/arialbd"
+                android:textColor="@color/black"
+                android:id="@+id/tanggal"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selasa, 28 juni 2020"
+                />
+            <TextView
+                android:id="@+id/jam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Jam : 08.00 WIB"
+                android:textColor="#A3A3A3"
+                android:textSize="10sp"
+                app:fontFamily="@font/arial" />
+
+        </LinearLayout>
+
+        <TextView
+            android:fontFamily="@font/arialbd"
+            android:id="@+id/badges"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="badge"
+            />
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

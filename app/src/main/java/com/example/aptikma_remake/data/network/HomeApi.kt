@@ -14,11 +14,11 @@ interface HomeApi {
     suspend fun berita(
     ): Response<List<BeritaAcaraResponseItem>>
 
-//    @FormUrlEncoded
+    @FormUrlEncoded
     @POST("statistic_pegawai")
     suspend fun statistic(
-//        @Field("id_pegawai") id_pegawai:Int
-    @Body body: RequestBodies.IdPegawai
-) : Response<List<Pegawai>>
+        @Field("id_pegawai") id_pegawai:String
+//    @Body body: RequestBodies.IdPegawai
+) : Response<StatisticResponse>
 
 }

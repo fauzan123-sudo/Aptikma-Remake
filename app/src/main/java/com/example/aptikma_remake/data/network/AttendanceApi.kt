@@ -1,9 +1,6 @@
 package com.example.aptikma_remake.data.network
 
-import com.example.aptikma_remake.data.model.AttendanceList
-import com.example.aptikma_remake.data.model.AttendanceUser
-import com.example.aptikma_remake.data.model.LoginResponse
-import com.example.aptikma_remake.data.model.SpinnerList
+import com.example.aptikma_remake.data.model.*
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -34,4 +31,12 @@ interface AttendanceApi {
     @GET("spinnerizin")
     suspend fun spinnerList(
     ): Response<List<SpinnerList>>
+
+    @FormUrlEncoded
+    @POST("scan")
+    suspend fun scanning(
+        @Field("id_pegawai") id_pegawai: String,
+        @Field("string_qr_code") string_qr_code: String,
+        @Field("status_scan") status_scan: String,
+    ) : Response<ScanResponse>
 }

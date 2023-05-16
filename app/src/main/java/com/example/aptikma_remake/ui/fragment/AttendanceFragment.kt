@@ -1,11 +1,11 @@
 package com.example.aptikma_remake.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,19 +48,21 @@ class AttendanceFragment :
             findNavController().navigate(R.id.action_attendanceFragment_to_bottomSheetAttendance)
         }
 
-        val idPegawai = tokenManager.getToken()
-        if (idPegawai != null) {
-            viewModel.getAttendanceList(idPegawai)
-            viewModel.getAttendanceUser(idPegawai)
-            Log.d("theTok", "$idPegawai")
-        }
+        val idUser = tokenManager.getToken()!!
+
+        viewModel.getAttendanceList(idUser)
+        viewModel.getAttendanceUser(idUser)
+
         viewModel.attendanceUser.observe(viewLifecycleOwner) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                progressDialog.dismiss()
+            }, 500)
             when (it) {
                 is NetworkResult.Success -> {
-
-                    binding.hadir.text = it.data!!.hadir.toString()
-                    binding.alpa.text  = it.data!!.alfa.toString()
-                    binding.izin.text  = it.data!!.izin.toString()
+                    val response = it.data!!
+                    binding.hadir.text = response.hadir.toString()
+                    binding.alpa.text = response.alfa.toString()
+                    binding.izin.text = response.izin.toString()
                 }
 
                 is NetworkResult.Error -> {
@@ -69,27 +71,38 @@ class AttendanceFragment :
                     handleApiError(error)
                 }
 
-                else -> Log.d("attendance user else", "$it")
+                is NetworkResult.Loading -> showLoading()
 
             }
         }
 
-        viewModel.attendanceList.observe(viewLifecycleOwner){
-            when(it){
-                is NetworkResult.Success ->{
+        viewModel.attendanceList.observe(viewLifecycleOwner) { it ->
+            Handler(Looper.getMainLooper()).postDelayed({
+                progressDialog.dismiss()
+            }, 500)
+            when (it) {
+                is NetworkResult.Success -> {
                     val data = it.data!!.map { it }
                     adapter.differ.submitList(data)
                 }
 
-                is NetworkResult.Error ->{
+                is NetworkResult.Error -> {
                     Log.d("attendance list error", "${it.data}")
                     val error = it.message.toString()
                     handleApiError(error)
                 }
 
-                else -> Log.d("attendance list else", "$it")
+                is NetworkResult.Loading -> showLoading()
             }
         }
+    }
+
+    private fun showLoading() {
+        progressDialog.progressHelper.barColor =
+            ContextCompat.getColor(requireContext(), R.color.gradient_end_color)
+        progressDialog.titleText = "Loading"
+        progressDialog.setCancelable(false)
+        progressDialog.show()
     }
 
 }

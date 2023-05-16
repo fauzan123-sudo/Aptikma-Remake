@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aptikma_remake.data.model.Sallary
+import com.example.aptikma_remake.data.model.SallaryResponse
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.data.repository.SallaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SallaryViewModel @Inject constructor(val repository: SallaryRepository):ViewModel() {
 
-    private val _sallary = MutableLiveData<NetworkResult<Sallary>>()
-    val sallary : LiveData<NetworkResult<Sallary>>
+    private val _sallary = MutableLiveData<NetworkResult<SallaryResponse>>()
+    val sallary : LiveData<NetworkResult<SallaryResponse>>
         get() = _sallary
 
 

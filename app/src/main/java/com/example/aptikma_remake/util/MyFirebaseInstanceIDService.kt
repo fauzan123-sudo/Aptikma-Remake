@@ -48,11 +48,6 @@ class MyFirebaseInstanceIDService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.e("token", "New Token")
     }
-//    override fun onNewToken(token: String?) {
-//        super.onNewToken(token)
-//        Log.e("token","New Token")
-//    }
-
 
     private fun showNotification(
         context: Context,

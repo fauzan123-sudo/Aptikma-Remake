@@ -9,20 +9,12 @@
         android:id="@+id/homeFragment"
         android:name="com.example.aptikma_remake.ui.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_salaryFragment"
-            app:destination="@id/salaryFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/salaryFragment"
         android:name="com.example.aptikma_remake.ui.fragment.SalaryFragment"
         android:label="fragment_sallary"
-        tools:layout="@layout/fragment_sallary" >
-        <action
-            android:id="@+id/action_salaryFragment_to_scanFragment"
-            app:destination="@id/scanFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_sallary" />
     <fragment
         android:id="@+id/scanFragment"
         android:name="com.example.aptikma_remake.ui.fragment.ScanFragment"
@@ -31,12 +23,6 @@
         <action
             android:id="@+id/action_scanFragment_to_attendanceFragment"
             app:destination="@id/attendanceFragment" />
-        <action
-            android:id="@+id/action_scanFragment_to_newsFragment"
-            app:destination="@id/newsFragment" />
-        <action
-            android:id="@+id/action_scanFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/attendanceFragment"

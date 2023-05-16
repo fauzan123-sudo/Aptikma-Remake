@@ -29,10 +29,11 @@
     <color name="red_font">#F95572</color>
 
     <!-- colors for button style -->
-
+    <color name="_primary">#0950A2</color>
     <color name="gradient_start_color">#4c84ff</color>
     <color name="gradient_end_color">#18a3fe</color>
-
+    <color name="_dark">#252832</color>
+    <color name="_grey">#7F838B</color>
 
     <!-- colors for tab and screent text -->
 

@@ -1,6 +1,5 @@
 package com.example.aptikma_remake.data.repository
 
-import com.example.aptikma_remake.data.network.ProfileApi
 import com.example.aptikma_remake.data.network.SallaryApi
 import javax.inject.Inject
 

@@ -1,10 +1,7 @@
 package com.example.aptikma_remake.data.DI
 
-import android.content.Context
-import androidx.room.Room
 import com.example.aptikma_remake.data.network.*
-import com.example.aptikma_remake.util.Constans
-import com.example.aptikma_remake.util.Constans.BASE_URL
+import com.example.aptikma_remake.util.Constants.BASE_URL
 //import com.example.kud.data.db.MyDatabase
 //import com.example.kud.data.network.AuthInterceptor
 //import com.example.kud.data.network.UserApi
@@ -12,10 +9,9 @@ import com.example.aptikma_remake.util.Constans.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit.Builder
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -53,9 +49,18 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(interceptor: AuthInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(interceptor).build()
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .addInterceptor(authInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
     }
+
 
     @Singleton
     @Provides

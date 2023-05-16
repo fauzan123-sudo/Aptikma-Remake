@@ -14,7 +14,8 @@
         />
     <item
         android:id="@+id/scanFragment"
-        android:title="SCAN" />
+        android:icon="@drawable/qr"
+        android:title="Scan" />
     <item
         android:id="@+id/salaryFragment"
         android:title="Gaji"

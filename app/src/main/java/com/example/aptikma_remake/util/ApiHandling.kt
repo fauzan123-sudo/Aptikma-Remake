@@ -8,16 +8,6 @@ import androidx.fragment.app.Fragment
 import com.example.aptikma_remake.R
 import com.google.android.material.snackbar.Snackbar
 
-fun View.snackBar(message: String, action: (() -> Unit)? = null) {
-    val snackBar = Snackbar.make(this, message, Snackbar.LENGTH_LONG)
-    action?.let {
-        snackBar.setAction("Retry") {
-            it()
-        }
-    }
-    snackBar.show()
-}
-
 fun Context.toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
 fun Activity.handleApiError(
@@ -54,8 +44,11 @@ fun Fragment.handleApiError(
             Toast.LENGTH_SHORT
         )
             .show()
-        else -> Toast.makeText(context, "$error", Toast.LENGTH_SHORT).show()
+        else -> requireView().snackBar(error!!)
     }
+}
 
-
+fun View.snackBar(message: String, action: (() -> Unit)? = null) {
+    val snackBar = Snackbar.make(this, message, Snackbar.LENGTH_LONG)
+    snackBar.show()
 }

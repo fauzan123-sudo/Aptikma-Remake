@@ -20,7 +20,7 @@ class AdapterTunjangan : RecyclerView.Adapter<AdapterTunjangan.ViewHolder>() {
             oldItem: DetailTunjangan,
             newItem: DetailTunjangan
         ): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.nama_tunjangan == newItem.nama_tunjangan
         }
 
         override fun areContentsTheSame(
@@ -46,7 +46,7 @@ class AdapterTunjangan : RecyclerView.Adapter<AdapterTunjangan.ViewHolder>() {
                     Locale.getDefault()
                 ) else it.toString()
             }
-            val value = myPosition.nominal.toInt()
+            val value = myPosition.nilai_tunjangan.toLong()
             val myNumber = NumberFormat.getNumberInstance(Locale.US)
                 .format(value)
                 .replace(",", ".")

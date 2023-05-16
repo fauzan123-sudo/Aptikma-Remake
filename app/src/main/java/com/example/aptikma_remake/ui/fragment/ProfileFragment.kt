@@ -1,17 +1,18 @@
 package com.example.aptikma_remake.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.example.aptikma_remake.R
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentProfileBinding
+import com.example.aptikma_remake.ui.activity.Login
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
+import com.example.aptikma_remake.util.Helper
 import com.example.aptikma_remake.util.TokenManager
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,40 +23,66 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     @Inject
     lateinit var tokenManager: TokenManager
-
-    private val viewModel:ProfileViewModel by viewModels()
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val idPegawai = tokenManager.getToken()
-        if (idPegawai != null) {
-            viewModel.getProfileUser(idPegawai)
-            Log.d("theTok", "$idPegawai")
+        swipeRefreshLayout = binding.swipe
+        loadData()
+
+        swipeRefreshLayout.setOnRefreshListener {
+            loadData()
         }
-        viewModel.profile.observe(viewLifecycleOwner){
-            when(it){
-                is NetworkResult.Success ->{
+
+        binding.logout.setOnClickListener {
+            SweetAlertDialog(requireContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Konfirmasi Logout")
+                .setContentText("Apakah Anda yakin ingin keluar?")
+                .setConfirmText("Ya")
+                .setConfirmClickListener { sweetAlertDialog ->
+                    sweetAlertDialog.dismissWithAnimation()
+                    tokenManager.deleteToken()
+                    requireActivity().startActivity(Intent(requireContext(), Login::class.java))
+                    requireActivity().finish()
+                }
+                .setCancelText("Tidak")
+                .setCancelClickListener { sweetAlertDialog ->
+                    sweetAlertDialog.dismissWithAnimation()
+                }
+                .show()
+
+        }
+    }
+
+    private fun loadData() {
+        val idUser = tokenManager.getToken()!!
+        viewModel.getProfileUser(idUser)
+
+        viewModel.profile.observe(viewLifecycleOwner) { it ->
+            swipeRefreshLayout.isRefreshing = false
+            when (it) {
+                is NetworkResult.Success -> {
                     val data = it.data!!.read
                     data.map {
                         binding.name.text = it.nama
                         binding.address.text = it.alamat
                         binding.noTlp.text = it.no_tlp
                         binding.tmpLhr.text = it.tempat_lahir
-                        binding.tglLhr.text = it.tgl_lahir
+                        binding.tglLhr.text = Helper().formatDate(it.tgl_lahir)
                         binding.nip.text = it.nip
                     }
                 }
 
-                is NetworkResult.Error ->{
+                is NetworkResult.Error -> {
                     Log.d("profile error", "${it.data}")
                     val error = it.message.toString()
                     handleApiError(error)
                 }
-                else -> Log.d("error else", "$it")
+
+                is NetworkResult.Loading -> swipeRefreshLayout.isRefreshing = true
             }
         }
-
     }
-
 }

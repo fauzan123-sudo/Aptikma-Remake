@@ -3,13 +3,17 @@ package com.example.aptikma_remake.ui.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.data.adapter.SpinnerAdapter
 import com.example.aptikma_remake.data.model.SpinnerList
@@ -31,6 +35,8 @@ import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class BottomSheetAttendance : BottomSheetDialogFragment(){
+
+    lateinit var progressDialog: SweetAlertDialog
 
     private var _binding: FragmentBottomSheetAttendanceBinding? = null
 
@@ -59,6 +65,7 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
     ): View {
 
         _binding = FragmentBottomSheetAttendanceBinding.inflate(inflater, container, false)
+        progressDialog = SweetAlertDialog(requireContext(), SweetAlertDialog.PROGRESS_TYPE)
         return binding.root
     }
 
@@ -70,6 +77,9 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
 
         viewModel.spinnerList()
         viewModel.spinnerList.observe(viewLifecycleOwner) { it ->
+            Handler(Looper.getMainLooper()).postDelayed({
+                progressDialog.dismiss()
+            }, 500)
             when (it) {
                 is NetworkResult.Success -> {
                     val list: ArrayList<SpinnerList> = ArrayList()
@@ -115,7 +125,7 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
                     handleApiError(error)
                 }
 
-                else -> Log.d("attendance list else", "$it")
+                is NetworkResult.Loading -> showLoading()
             }
 
         }
@@ -262,4 +272,13 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
         super.onDestroyView()
         _binding = null
     }
+
+    private fun showLoading() {
+        progressDialog.progressHelper.barColor =
+            ContextCompat.getColor(requireContext(), R.color.gradient_end_color)
+        progressDialog.titleText = "Loading"
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
 }

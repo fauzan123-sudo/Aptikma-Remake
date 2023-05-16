@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val api: HomeApi) : BaseRepository() {
 
-    suspend fun statistic(body: RequestBodies.IdPegawai) = safeApiCall { api.statistic(body) }
+    suspend fun statistic(id_pegawai:String) = safeApiCall { api.statistic(id_pegawai) }
     suspend fun berita() = safeApiCall { api.berita() }
 
 

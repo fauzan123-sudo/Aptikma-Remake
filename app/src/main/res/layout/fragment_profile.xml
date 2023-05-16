@@ -1,303 +1,328 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark"
     tools:context=".ui.fragment.ProfileFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.10" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.90" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/round_bg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline4">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView6"
-            app:layout_constraintEnd_toEndOf="@id/guideline8"
-            app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toTopOf="@id/guideline10">
-
-            <TextView
-                android:id="@+id/txtUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtNip"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#21000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtNip"
-                app:layout_constraintTop_toBottomOf="@+id/txtUsername" />
-
-            <TextView
-                android:id="@+id/txtNip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NIP"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtTempLa"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtUsername" />
-
-            <View
-                android:id="@+id/view3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#21000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtTempLa"
-                app:layout_constraintTop_toBottomOf="@+id/txtNip" />
-
-            <TextView
-                android:id="@+id/txtTempLa"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tempat Lahir"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtTgl"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtNip" />
-
-            <View
-                android:id="@+id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#21000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtTgl"
-                app:layout_constraintTop_toBottomOf="@+id/txtTempLa" />
-
-            <TextView
-                android:id="@+id/txtTgl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tanggal Lahir"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtNoTlp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTempLa" />
-
-            <View
-                android:id="@+id/view4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#21000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtNoTlp"
-                app:layout_constraintTop_toBottomOf="@+id/txtTgl" />
-
-            <TextView
-                android:id="@+id/txtNoTlp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No Telpon"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtAlam"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTgl" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#21000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtAlam"
-                app:layout_constraintTop_toBottomOf="@+id/txtNoTlp" />
-
-            <TextView
-                android:id="@+id/txtAlam"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alamat"
-                android:textColor="#A3A3A3"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtNoTlp" />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="Ahmad Dwy Fauzan"
-                android:textColor="@color/darkText"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/nip"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="spread" />
-
-            <TextView
-                android:id="@+id/nip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="516166161651"
-                android:textSize="10sp"
-                android:textColor="@color/darkText"
-                app:layout_constraintBottom_toTopOf="@+id/tmpLhr"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
-
-            <TextView
-                android:id="@+id/tmpLhr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="Nganjuk"
-                android:textSize="10sp"
-                android:textColor="@color/darkText"
-                app:layout_constraintBottom_toTopOf="@+id/tglLhr"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nip" />
-
-            <TextView
-                android:id="@+id/tglLhr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="23-05-1998"
-                android:textSize="10sp"
-                android:textColor="@color/darkText"
-                app:layout_constraintBottom_toTopOf="@+id/noTlp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tmpLhr" />
-
-            <TextView
-                android:id="@+id/noTlp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="085608727991"
-                android:textSize="10sp"
-                android:textColor="@color/darkText"
-                app:layout_constraintBottom_toTopOf="@+id/address"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tglLhr" />
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/arialbd"
-                android:text="Ds. Campur Nganjuk"
-                android:textSize="10sp"
-                android:textColor="@color/darkText"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/noTlp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+        android:background="@color/dark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline7"
+            android:id="@+id/guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.10" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline8"
+            android:id="@+id/guideline3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.90" />
 
-
-        <TextView
-            android:id="@+id/textView6"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/information"
-            android:textAlignment="center"
-            android:textColor="#F83255"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@id/guideline9"
-            app:layout_constraintEnd_toEndOf="@id/guideline8"
-            app:layout_constraintStart_toStartOf="@id/guideline7" />
+            android:layout_height="0dp"
+            android:background="@drawable/round_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline4">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/textView6"
+                app:layout_constraintEnd_toEndOf="@id/guideline8"
+                app:layout_constraintStart_toEndOf="@id/guideline7"
+                app:layout_constraintTop_toTopOf="@id/guideline10">
+
+                <TextView
+                    android:id="@+id/txtUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtNip"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#21000000"
+                    app:layout_constraintBottom_toTopOf="@+id/txtNip"
+                    app:layout_constraintTop_toBottomOf="@+id/txtUsername" />
+
+                <TextView
+                    android:id="@+id/txtNip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NIP"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtTempLa"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtUsername" />
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#21000000"
+                    app:layout_constraintBottom_toTopOf="@+id/txtTempLa"
+                    app:layout_constraintTop_toBottomOf="@+id/txtNip" />
+
+                <TextView
+                    android:id="@+id/txtTempLa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tempat Lahir"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtTgl"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtNip" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#21000000"
+                    app:layout_constraintBottom_toTopOf="@+id/txtTgl"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTempLa" />
+
+                <TextView
+                    android:id="@+id/txtTgl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tanggal Lahir"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtNoTlp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTempLa" />
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#21000000"
+                    app:layout_constraintBottom_toTopOf="@+id/txtNoTlp"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTgl" />
+
+                <TextView
+                    android:id="@+id/txtNoTlp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Telpon"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtAlam"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTgl" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#21000000"
+                    app:layout_constraintBottom_toTopOf="@+id/txtAlam"
+                    app:layout_constraintTop_toBottomOf="@+id/txtNoTlp" />
+
+                <TextView
+                    android:id="@+id/txtAlam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alamat"
+                    android:textColor="#A3A3A3"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtNoTlp" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="Ahmad Dwy Fauzan"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/nip"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="spread" />
+
+                <TextView
+                    android:id="@+id/nip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="516166161651"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/tmpLhr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name" />
+
+                <TextView
+                    android:id="@+id/tmpLhr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="Nganjuk"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/tglLhr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nip" />
+
+                <TextView
+                    android:id="@+id/tglLhr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="23-05-1998"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/noTlp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tmpLhr" />
+
+                <TextView
+                    android:id="@+id/noTlp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="085608727991"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toTopOf="@+id/address"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tglLhr" />
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/arialbd"
+                    android:text="Ds. Campur Nganjuk"
+                    android:textColor="@color/darkText"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/noTlp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.10" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.90" />
+
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/information"
+                android:textAlignment="center"
+                android:textColor="#F83255"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/guideline9"
+                app:layout_constraintEnd_toEndOf="@id/guideline8"
+                app:layout_constraintStart_toStartOf="@id/guideline7" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.90" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.125" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageUser"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/brochure"
+            app:layout_constraintBottom_toBottomOf="@id/guideline6"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/guideline3"
+            app:layout_constraintStart_toStartOf="@id/guideline2"
+            app:layout_constraintTop_toTopOf="@id/guideline5" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline9"
+            android:id="@+id/guideline4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.90" />
+            app:layout_constraintGuide_percent="0.20" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline10"
+            android:id="@+id/guideline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.125" />
+            app:layout_constraintGuide_percent="0.10" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.30" />
 
+        <LinearLayout
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:id="@+id/tv_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Logout"
+                android:textColor="@color/alpa" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_logout" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageUser"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/brochure"
-        app:layout_constraintBottom_toBottomOf="@id/guideline6"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
-        app:layout_constraintTop_toTopOf="@id/guideline5" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.20" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.10" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.30" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

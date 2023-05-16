@@ -2,8 +2,8 @@ package com.example.aptikma_remake.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.aptikma_remake.util.Constans.PREFS_TOKEN_FILE
-import com.example.aptikma_remake.util.Constans.USER_TOKEN
+import com.example.aptikma_remake.util.Constants.PREFS_TOKEN_FILE
+import com.example.aptikma_remake.util.Constants.USER_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

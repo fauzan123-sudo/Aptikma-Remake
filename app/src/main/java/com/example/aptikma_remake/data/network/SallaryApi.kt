@@ -1,6 +1,6 @@
 package com.example.aptikma_remake.data.network
 
-import com.example.aptikma_remake.data.model.Sallary
+import com.example.aptikma_remake.data.model.SallaryResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -14,7 +14,7 @@ interface SallaryApi {
     @POST("gaji")
     suspend fun getSallary(
         @Field("id_pegawai") id_pegawai:String
-    ) : Response<Sallary>
+    ) : Response<SallaryResponse>
 
 
 }

@@ -4,11 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.data.model.BeritaAcaraResponseItem
-import com.example.aptikma_remake.util.Constans.IMAGE_URL
+import com.example.aptikma_remake.util.Constants.IMAGE_URL
 import com.smarteist.autoimageslider.SliderViewAdapter
 import com.squareup.picasso.Picasso
 

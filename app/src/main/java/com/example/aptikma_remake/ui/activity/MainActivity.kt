@@ -1,29 +1,34 @@
 package com.example.aptikma_remake.ui.activity
 
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.databinding.ActivityMainBinding
 import com.example.aptikma_remake.databinding.LayoutWarningDialogBinding
+import com.example.aptikma_remake.util.getData
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
+    var dataUser = getData()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+//        val toolbarBinding = OverLayBinding.inflate(layoutInflater, view.findViewById(R.id.constraintLayout), true)
+//        toolbarBinding.namas.text = "dataUser!!.nama"
+//        Log.d("my name", dataUser!!.nama)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment

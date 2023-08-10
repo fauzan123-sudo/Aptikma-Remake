@@ -1,6 +1,6 @@
 package com.example.aptikma_remake.ui.fragment
 
-import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import cn.pedant.SweetAlert.SweetAlertDialog
@@ -20,21 +22,18 @@ import com.example.aptikma_remake.data.model.SpinnerList
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentBottomSheetAttendanceBinding
 import com.example.aptikma_remake.ui.viewModel.AttendanceViewModel
-import com.example.aptikma_remake.util.TokenManager
+import com.example.aptikma_remake.util.getData
 import com.example.aptikma_remake.util.handleApiError
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
-class BottomSheetAttendance : BottomSheetDialogFragment(){
+class BottomSheetAttendance : BottomSheetDialogFragment() {
 
     lateinit var progressDialog: SweetAlertDialog
 
@@ -42,15 +41,13 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
 
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var tokenManager: TokenManager
+    private var dataUser = getData()
 
     private val viewModel: AttendanceViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         return super.onCreateDialog(savedInstanceState).apply {
-            // window?.setDimAmount(0.2f) // Set dim amount here
             setOnShowListener {
                 val bottomSheet =
                     findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout
@@ -69,23 +66,23 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
         return binding.root
     }
 
-    @SuppressLint("CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val spinner = binding.spinnerType
-        val id_pegawai = tokenManager.getToken()
+//        val id_pegawai = dataUser?.id_pegawai
+
+        setTextViewColorGrey()
 
         viewModel.spinnerList()
-        viewModel.spinnerList.observe(viewLifecycleOwner) { it ->
+        viewModel.spinnerList.observe(viewLifecycleOwner) {
             Handler(Looper.getMainLooper()).postDelayed({
                 progressDialog.dismiss()
             }, 500)
             when (it) {
                 is NetworkResult.Success -> {
-                    val list: ArrayList<SpinnerList> = ArrayList()
-
-                    it.data!!.map {
-                        list.add(
+                    val dataFromApi = it.data!!
+                    if (dataFromApi.isNotEmpty()) {
+                        val spinnerData: MutableList<SpinnerList> = dataFromApi.map {
                             SpinnerList(
                                 it.created_by,
                                 it.created_date,
@@ -94,28 +91,40 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
                                 it.id_jenis_izin,
                                 it.nama
                             )
+                        }.toMutableList()
+
+                        val defaultItem = SpinnerList(
+                            created_by = "",
+                            created_date = "",
+                            edited_by = "",
+                            edited_date = "",
+                            id_jenis_izin = "",
+                            nama = "Pilih Jenis Perizinan"
                         )
-                    }
-                    val spinnerAdapter = SpinnerAdapter(requireContext(), list)
-                    spinner.adapter = spinnerAdapter
-                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onNothingSelected(parent: AdapterView<*>?) {
 
-                        }
+                        spinnerData.add(0, defaultItem)
 
-                        override fun onItemSelected(
-                            parent: AdapterView<*>?,
-                            view: View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            val clickedItem: SpinnerList =
-                                parent?.getItemAtPosition(position) as SpinnerList
-                            val idSpinner = clickedItem.id_jenis_izin
-                            Log.d("idSpinner", idSpinner)
-                            Toast.makeText(requireContext(), idSpinner, Toast.LENGTH_SHORT).show()
-                        }
+                        val spinnerAdapter = SpinnerAdapter(requireContext(), spinnerData)
+                        spinner.adapter = spinnerAdapter
+                        spinner.prompt = "Pilih Jenis Perizinan"
+                        spinner.onItemSelectedListener =
+                            object : AdapterView.OnItemSelectedListener {
+                                override fun onNothingSelected(parent: AdapterView<*>?) {
+                                    Log.d("TAG", "onNothingSelected: ")
+//                                    spinner.setSelection(0)
+                                }
 
+                                override fun onItemSelected(
+                                    parent: AdapterView<*>?,
+                                    view: View?,
+                                    position: Int,
+                                    id: Long
+                                ) {
+                                    val selectedItem = spinnerAdapter.getItem(position)
+                                    Log.d("idSpinner", selectedItem!!.id_jenis_izin)
+                                }
+
+                            }
                     }
                 }
 
@@ -130,142 +139,236 @@ class BottomSheetAttendance : BottomSheetDialogFragment(){
 
         }
 
-
-//        val offsetFromTop = 200
-//        (dialog as? BottomSheetDialog)?.behavior?.apply {
-//            isFitToContents = false
-//            expandedOffset = offsetFromTop
-//            state = BottomSheetBehavior.STATE_EXPANDED
-//        }
-
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             if (R.id.radioHour == checkedId) {
-                setTimePicker()
-            } else if(R.id.radioDay == checkedId){
-                setTimeCalendar()
-            }else{
+                with(binding) {
+                    txtFrom.text = "-- : --"
+                    txtUntil.text = "-- : --"
+                    binding.txtFrom.setTextColor(requireContext().getColor(R.color._grey))
+                    binding.txtUntil.setTextColor(requireContext().getColor(R.color._grey))
+                    txtFrom.isEnabled = true
+                    txtFrom.setOnClickListener {
+                        val min = 8
+                        val max = 15
+                        val calendar = Calendar.getInstance()
+                        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                        val currentMinute = calendar.get(Calendar.MINUTE)
+                        showMaterialTimePicker(
+                            currentHour,
+                            currentMinute + 1,
+                            min,
+                            max
+                        ) { selectTime ->
+                            txtFrom.text = selectTime
+                            if (txtFrom.text.toString() != "-- : --") {
+                                binding.txtFrom.setTextColor(requireContext().getColor(R.color.black))
+                            } else {
+                                binding.txtFrom.setTextColor(requireContext().getColor(R.color._grey))
+                            }
+                        }
+                    }
+                    txtUntil.setOnClickListener {
+                        if (txtFrom.text.toString() != "-- : --") {
+                            val getStart = txtFrom.text.toString()
+                            val getHour = getStart.split(":")[0].toInt()
+                            showMaterialTimePicker(
+                                getHour + 1,
+                                0,
+                                getHour + 1,
+                                16
+                            ) { selectTime ->
+                                txtUntil.text = selectTime
+                                if (txtUntil.text.toString() != "-- : --") {
+                                    binding.txtUntil.setTextColor(requireContext().getColor(R.color.black))
+                                } else {
+                                    binding.txtUntil.setTextColor(requireContext().getColor(R.color._grey))
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } else if (R.id.radioDay == checkedId) {
+                with(binding) {
+                    txtFrom.text = "-- : --"
+                    txtUntil.text = "-- : --"
+                    binding.txtFrom.setTextColor(requireContext().getColor(R.color._grey))
+                    binding.txtUntil.setTextColor(requireContext().getColor(R.color._grey))
+                    txtFrom.isEnabled = true
+                    txtUntil.isEnabled = false
+                    txtFrom.setOnClickListener {
+                        val today = Calendar.getInstance()
+                        val oneWeekLater = Calendar.getInstance()
+                        oneWeekLater.add(Calendar.DAY_OF_MONTH, 7)
+                        Log.d("check min", "${today.timeInMillis}")
+                        Log.d("check max", "${oneWeekLater.timeInMillis}")
+                        showDatePicker(
+                            today.timeInMillis,
+                            oneWeekLater.timeInMillis
+                        ) { selectedDate ->
+                            txtFrom.text = selectedDate
+                            if (txtFrom.text.toString() != "-- : --") {
+                                binding.txtFrom.setTextColor(requireContext().getColor(R.color.black))
+                            } else {
+                                binding.txtFrom.setTextColor(requireContext().getColor(R.color._grey))
+                            }
+                            txtUntil.isEnabled = txtFrom.text.toString() != "-- : --"
+                        }
+                    }
+                    txtUntil.setOnClickListener {
+                        if (txtFrom.text.toString() != "-- : --") {
+                            val selectedDateText = binding.txtFrom.text.toString()
+                            val selectedDateFormat =
+                                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val selectedDate = selectedDateFormat.parse(selectedDateText)
+
+                            val selectedCalendar = Calendar.getInstance()
+                            selectedCalendar.time = selectedDate
+                            val selectedDateInMillis = selectedCalendar.timeInMillis
+
+                            val oneMonthLater = Calendar.getInstance()
+                            oneMonthLater.timeInMillis = selectedDateInMillis
+                            oneMonthLater.add(Calendar.MONTH, 1) // Menambah satu bulan
+
+                            val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+                            Log.d("check min", dateFormatter.format(selectedDateInMillis))
+                            Log.d(
+                                "check max one month later",
+                                dateFormatter.format(oneMonthLater.timeInMillis)
+                            )
+
+                            showDatePicker(
+                                selectedDateInMillis + (24 * 60 * 60 * 1000),
+                                oneMonthLater.timeInMillis
+                            ) { selectedDate ->
+                                txtUntil.text = selectedDate
+                                if (txtUntil.text.toString() != "-- : --") {
+                                    binding.txtUntil.setTextColor(requireContext().getColor(R.color.black))
+                                } else {
+                                    binding.txtUntil.setTextColor(requireContext().getColor(R.color._grey))
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            } else {
                 binding.txtFrom.isEnabled = false
                 binding.txtUntil.isEnabled = false
             }
-
         }
 
-    }
-
-    private fun setTimePicker() {
-        binding.txtFrom.isEnabled = true
-        binding.txtUntil.isEnabled = true
-        binding.txtFrom.setOnClickListener {
-        openTimePickerFrom()
-        }
-        binding.txtUntil.setOnClickListener {
-            openTimePickerUntil()
-        }
-    }
-
-    private fun setTimeCalendar(){
-        binding.txtFrom.isEnabled = true
-        binding.txtUntil.isEnabled = true
-        binding.txtFrom.setOnClickListener {
-            openCalendarFrom()
-        }
-        binding.txtUntil.setOnClickListener {
-            openCalendarUntil()
+        binding.btnSend.setOnClickListener {
+            val reason = binding.txtReason.text.toString()
+            val start = binding.txtFrom.text.toString()
+            val finish = binding.txtUntil.text.toString()
+            val selectedSpinnerItem = binding.spinnerType.selectedItem as SpinnerList
+            val selectedId = selectedSpinnerItem.id_jenis_izin
+            if (selectedId == "" || selectedId.isEmpty()) {
+                Log.d("id spinner ", "harap pilih jenis izin!!")
+            } else if (start == "-- : --") {
+                Log.d("start perizinan", "harap isi awal perizinan")
+            } else if (finish == "-- : --") {
+                Log.d("end perizinan", "harap isi akhir perizinan")
+            } else {
+                Log.d("kirim data", "jenis izin $selectedId \n" +
+                        "mulai $start \n " +
+                        "berakhir $finish \n" +
+                        "dengan alasan $reason")
+            }
         }
     }
 
-    private fun openCalendarFrom() {
-        val datePicker = MaterialDatePicker.Builder
-            .datePicker()
-            .setTitleText("")
-            .build()
-        datePicker.show(childFragmentManager, "DatePicker")
-
-        datePicker.addOnPositiveButtonClickListener {
-            val dateFormatter = SimpleDateFormat("dd-MM-yyyy")
-            val date = dateFormatter.format(Date(it))
-            binding.txtFrom.text = date
-            Toast.makeText(requireContext(), "$date is selected", Toast.LENGTH_LONG).show()
-
-        }
-
-        datePicker.addOnNegativeButtonClickListener {
-            Toast.makeText(
-                requireContext(),
-                "${datePicker.headerText} is cancelled",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-
-        datePicker.addOnCancelListener {
-            Toast.makeText(requireContext(), "Date Picker Cancelled", Toast.LENGTH_LONG).show()
-        }
+    private fun convertStringToDate(dateStr: String): Date {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        return dateFormat.parse(dateStr) ?: Date()
     }
 
-    private fun openCalendarUntil() {
-        val datePicker = MaterialDatePicker.Builder
-            .datePicker()
-            .setTitleText("")
-            .build()
-        datePicker.show(childFragmentManager, "DatePicker")
-
-        datePicker.addOnPositiveButtonClickListener {
-            val dateFormatter = SimpleDateFormat("dd-MM-yyyy")
-            val date = dateFormatter.format(Date(it))
-            binding.txtUntil.text = date
-            Toast.makeText(requireContext(), "$date is selected", Toast.LENGTH_LONG).show()
-
-        }
-
-        datePicker.addOnNegativeButtonClickListener {
-            Toast.makeText(
-                requireContext(),
-                "${datePicker.headerText} is cancelled",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-
-        datePicker.addOnCancelListener {
-            Toast.makeText(requireContext(), "Date Picker Cancelled", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun openTimePickerFrom() {
+    private fun showMaterialTimePicker(
+        defaultHour: Int,
+        defaultMinute: Int,
+        minHour: Int,
+        maxHour: Int,
+        callback: (String) -> Unit
+    ) {
         val isSystem24Hour = is24HourFormat(requireContext())
         val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
-
         val picker = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat)
-            .setHour(8)
-            .setMinute(0)
-            .setTitleText("")
+            .setHour(defaultHour)
+            .setMinute(defaultMinute)
             .build()
-        picker.show(childFragmentManager, "MyTag")
 
         picker.addOnPositiveButtonClickListener {
-            val h = picker.hour
-            val m = picker.minute
-            binding.txtFrom.text = "$h.$m"
+            val selectedHour = picker.hour
+            val selectedMinute = picker.minute
+            val selectedTime = "$selectedHour:$selectedMinute"
+
+            if (selectedHour < minHour || selectedHour > maxHour ||
+                (selectedHour == minHour && selectedMinute < 0) ||
+                (selectedHour == maxHour && selectedMinute > 0)
+            ) {
+                callback("-- : --")
+                Toast.makeText(
+                    requireContext(),
+                    "Waktu harus antara $minHour:00 dan $maxHour:00",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                callback(String.format("%02d:%02d", selectedHour, selectedMinute))
+            }
         }
+
+        val fragmentManager = parentFragmentManager
+        picker.show(fragmentManager, "MaterialTimePicker")
     }
 
-    private fun openTimePickerUntil() {
-        val isSystem24Hour = is24HourFormat(requireContext())
-        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+    private fun setTextViewColorGrey() {
+        binding.txtFrom.setTextColor(requireContext().getColor(R.color._grey))
+        binding.txtUntil.setTextColor(requireContext().getColor(R.color._grey))
+    }
 
-        val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(clockFormat)
-            .setHour(8)
-            .setMinute(0)
-            .setTitleText("")
-            .build()
-        picker.show(childFragmentManager, "MyTag")
+    private fun showDatePicker(minDate: Long, maxDate: Long, onDateSelected: (String) -> Unit) {
+        val mCalendar = Calendar.getInstance()
+        val tempCalendar = Calendar.getInstance()
+        tempCalendar.timeInMillis = mCalendar.timeInMillis
 
-        picker.addOnPositiveButtonClickListener {
-            val h = picker.hour
-            val m = picker.minute
-            binding.txtUntil.text = "$h.$m"
+        val mDialog = DatePickerDialog(
+            requireContext(),
+            { _, mYear, mMonth, mDay ->
+                mCalendar[Calendar.YEAR] = tempCalendar[Calendar.YEAR]
+                mCalendar[Calendar.MONTH] = tempCalendar[Calendar.MONTH]
+                mCalendar[Calendar.DAY_OF_MONTH] = tempCalendar[Calendar.DAY_OF_MONTH]
+
+                val selectedCalendar = Calendar.getInstance()
+                selectedCalendar[Calendar.YEAR] = mYear
+                selectedCalendar[Calendar.MONTH] = mMonth
+                selectedCalendar[Calendar.DAY_OF_MONTH] = mDay
+                if (selectedCalendar.timeInMillis in minDate..maxDate) {
+                    mCalendar[Calendar.YEAR] = selectedCalendar[Calendar.YEAR]
+                    mCalendar[Calendar.MONTH] = selectedCalendar[Calendar.MONTH]
+                    mCalendar[Calendar.DAY_OF_MONTH] = selectedCalendar[Calendar.DAY_OF_MONTH]
+                }
+
+                val formattedDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    .format(Date(mCalendar.timeInMillis))
+                onDateSelected(formattedDate)
+            },
+            tempCalendar[Calendar.YEAR],
+            tempCalendar[Calendar.MONTH],
+            tempCalendar[Calendar.DAY_OF_MONTH]
+        )
+
+        mDialog.datePicker.minDate = minDate
+        mDialog.datePicker.maxDate = maxDate
+
+        mDialog.setOnCancelListener {
+            Log.d("cancel", "calendar is cancel")
         }
+
+        mDialog.show()
     }
 
     override fun onDestroyView() {

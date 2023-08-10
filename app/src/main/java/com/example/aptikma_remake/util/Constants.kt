@@ -1,10 +1,17 @@
 package com.example.aptikma_remake.util
 
 object Constants {
-//    const val BASE_URL = "http://192.168.1.25:70/wengky_new/api/"
+// TODO URL
     const val BASE_URL = "https://wengky.ngastaa.com/api/"
+    const val PROFILE_USER = "https://wengky.ngastaa.com/upload/image/pegawai/"
     const val IMAGE_URL = "https://wengky.ngastaa.com/upload/berita/"
-    const val TAG = "fapping"
-    const val USER_TOKEN = "user_token"
-    const val PREFS_TOKEN_FILE = "prefs_token_file"
+
+//    Todo String Constants
+    const val MY_Notification = "Notifikasi"
+    const val LoginTag = "token login"
+    const val LoginError = "error login"
+    const val NewToken = "LoginError"
+
+//   Todo Firebase and notification
+    const val notifyCount = "notification_count"
 }

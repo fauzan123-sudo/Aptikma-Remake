@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/round_bg"
     android:orientation="vertical"
-    android:padding="15dp"
+    android:padding="@dimen/_15sdp"
     tools:context=".ui.fragment.BottomSheetAttendance">
 
     <androidx.constraintlayout.widget.Guideline
@@ -26,7 +26,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/button3"
         android:layout_width="0dp"
-        android:layout_height="3dp"
+        android:layout_height="@dimen/_3sdp"
         app:cardBackgroundColor="#C4C4C4"
         app:cardCornerRadius="40dp"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="Jenis Izin"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:text="Pilih Waktu"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintStart_toStartOf="@+id/textView1"
         app:layout_constraintTop_toBottomOf="@+id/textView1" />
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:text="Dari"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:text="Sampai"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintStart_toStartOf="@+id/textView1"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -86,20 +86,21 @@
         android:layout_marginBottom="20dp"
         android:text="Alasan"
         android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_send"
         app:layout_constraintStart_toStartOf="@+id/textView1"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button2"
+        android:id="@+id/btn_send"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/circle_red_button"
         android:fontFamily="@font/arial"
         android:text="Kirim"
+        android:textStyle="bold"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12ssp"
         app:backgroundTint="@color/red_font"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +117,7 @@
         android:fontFamily="@font/acme"
         android:text="Format Izin"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,26 +126,29 @@
 
     <Spinner
         android:id="@+id/spinnerType"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/Dark_text"
         android:fontFamily="@font/acme"
         android:textAlignment="textEnd"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="@dimen/_14ssp"
+        android:spinnerMode="dropdown"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/textView12"
-        tools:listitem="@layout/item_spinner" />
+        />
 
     <TextView
         android:id="@+id/txtFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/acme"
-        android:text="07.00"
+        android:text="-- : --"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
@@ -154,15 +158,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/acme"
-        android:text="12.00"
+        android:text="-- : --"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView4" />
 
     <EditText
-        android:id="@+id/textView23"
+        android:id="@+id/txt_reason"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/acme"
@@ -170,8 +174,8 @@
         android:textAlignment="textEnd"
         android:textColor="@color/black"
         android:textColorHint="#33000000"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_send"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
@@ -193,7 +197,7 @@
             android:fontFamily="@font/acme"
             android:text="Jam"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 
         <RadioButton
@@ -203,7 +207,7 @@
             android:fontFamily="@font/acme"
             android:text="Hari"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 
     </RadioGroup>
@@ -214,6 +218,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.50" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

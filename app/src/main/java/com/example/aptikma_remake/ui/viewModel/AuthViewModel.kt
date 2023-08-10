@@ -22,12 +22,12 @@ class AuthViewModel @Inject constructor(app: Application, private val repository
     val userResponseLiveData: LiveData<NetworkResult<LoginResponse>>
         get() = _userResponseLiveData
 
-    fun login(username:String, password:String) {
+    fun login(username:String, password:String, token:String) {
         viewModelScope.launch {
             val connected = CheckInternet().check()
             if (connected) {
                 _userResponseLiveData.postValue(NetworkResult.Loading())
-                _userResponseLiveData.postValue(repository.loginUser(username, password))
+                _userResponseLiveData.postValue(repository.loginUser(username, password, token))
             } else
                 _userResponseLiveData.postValue(NetworkResult.Error("No Internet Connection"))
         }

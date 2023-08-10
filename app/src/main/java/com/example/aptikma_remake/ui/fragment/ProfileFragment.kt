@@ -13,16 +13,13 @@ import com.example.aptikma_remake.ui.activity.Login
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
 import com.example.aptikma_remake.util.Helper
-import com.example.aptikma_remake.util.TokenManager
+import com.example.aptikma_remake.util.deleteData
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
-    @Inject
-    lateinit var tokenManager: TokenManager
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val viewModel: ProfileViewModel by viewModels()
 
@@ -43,7 +40,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 .setConfirmText("Ya")
                 .setConfirmClickListener { sweetAlertDialog ->
                     sweetAlertDialog.dismissWithAnimation()
-                    tokenManager.deleteToken()
+//                    tokenManager.deleteToken()
+                    deleteData()
                     requireActivity().startActivity(Intent(requireContext(), Login::class.java))
                     requireActivity().finish()
                 }
@@ -57,14 +55,15 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun loadData() {
-        val idUser = tokenManager.getToken()!!
-        viewModel.getProfileUser(idUser)
+//        val idUser = tokenManager.getToken()!!
+        viewModel.getProfileUser(dataUser!!.id_pegawai)
 
         viewModel.profile.observe(viewLifecycleOwner) { it ->
             swipeRefreshLayout.isRefreshing = false
             when (it) {
                 is NetworkResult.Success -> {
                     val data = it.data!!.read
+
                     data.map {
                         binding.name.text = it.nama
                         binding.address.text = it.alamat

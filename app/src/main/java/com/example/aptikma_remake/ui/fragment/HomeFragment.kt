@@ -1,5 +1,9 @@
 package com.example.aptikma_remake.ui.fragment
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -10,7 +14,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.example.aptikma_remake.R
+import com.example.aptikma_remake.data.adapter.NewsAdapter
 import com.example.aptikma_remake.data.adapter.SliderAdapter
 import com.example.aptikma_remake.data.adapter.StatisticAdapter
 import com.example.aptikma_remake.data.model.BeritaAcaraResponseItem
@@ -19,7 +28,11 @@ import com.example.aptikma_remake.databinding.FragmentHomeBinding
 import com.example.aptikma_remake.databinding.LayoutWarningDialogBinding
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.HomeViewModel
-import com.example.aptikma_remake.util.TokenManager
+import com.example.aptikma_remake.ui.viewModel.NewsViewModel
+import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
+import com.example.aptikma_remake.util.Constants
+import com.example.aptikma_remake.util.deleteNotificationCount
+import com.example.aptikma_remake.util.getNotificationCount
 import com.example.aptikma_remake.util.handleApiError
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -33,17 +46,20 @@ import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnima
 import com.smarteist.autoimageslider.SliderAnimations
 import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
-    @Inject
-    lateinit var tokenManager: TokenManager
-    lateinit var statisticAdapter: StatisticAdapter
+    private val myProfile: ProfileViewModel by viewModels()
+    private val newsViewModel:HomeViewModel by viewModels()
+    private val newFireBase: NewsViewModel by viewModels()
+
+    private lateinit var statisticAdapter: StatisticAdapter
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private val sliderAdapter = SliderAdapter()
+    lateinit var adapter: NewsAdapter
     private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var sliderView: SliderView
@@ -52,10 +68,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     lateinit var lineChart: LineChart
 
+    private lateinit var recyclerview: RecyclerView
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        topBar()
+        deleteBadgeValue()
 
+        recyclerview = binding.recyclerView
+        adapter = NewsAdapter(requireContext())
+        recyclerview.adapter = adapter
+        recyclerview.layoutManager = LinearLayoutManager(requireContext())
+        newsHandler()
+
+//        recyclerView.apply {
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = notificationAdapter
+//        }
+        Log.d("top photo", Constants.PROFILE_USER + dataUser!!.image)
+
+        swipeRefreshLayout = binding.swipe
+        loadData()
+        swipeRefreshLayout.setOnRefreshListener {
+            loadData()
+        }
 //        Statistic
         statisticAdapter = StatisticAdapter()
 
@@ -70,48 +107,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
 
 
-        val idUser = tokenManager.getToken()
-        if (idUser != null) {
-            viewModel.statistic(idUser)
-            Log.d("theTok", "$idUser")
-        }
-
-        viewModel.statistic.observe(viewLifecycleOwner) { it ->
-            progressDialog.dismiss()
-            when (it) {
-                is NetworkResult.Success -> {
-                    val response = it.data!!
-                    val data = response.pegawai.map { it.jumlah }
-                    statistic(data)
-                }
-
-                is NetworkResult.Error -> {
-                    Log.e("error", "${it.message}")
-                    handleApiError(it.message)
-                }
-
-                is NetworkResult.Loading -> showLoading()
-            }
-        }
-
-        viewModel.newsRequest()
-        viewModel.berita.observe(viewLifecycleOwner) {
-            progressDialog.dismiss()
-            when (it) {
-                is NetworkResult.Success -> {
-                    listImageSlider.clear()
-                    it.data?.let { it1 -> listImageSlider.addAll(it1) }
-                    sliderView.setSliderAdapter(sliderAdapter)
-                    sliderAdapter.renewItems(listImageSlider)
-                }
-                is NetworkResult.Error -> {
-                    handleApiError(it.message)
-                }
-
-                is NetworkResult.Loading -> showLoading()
-            }
-        }
-
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val navController = findNavController()
@@ -124,6 +119,109 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+    private fun newsHandler() {
+        newsViewModel.newsRequest()
+        newsViewModel.berita.observe(viewLifecycleOwner){
+            when(it){
+                is NetworkResult.Success ->{
+                    val respones = it.data!!
+                    adapter.differ.submitList(respones)
+                }
+
+                is NetworkResult.Loading ->{
+
+                }
+
+                is NetworkResult.Error ->{
+                    handleApiError(it.message)
+                }
+            }
+        }
+    }
+
+    private fun topBar() {
+        myProfile.getProfileUser(dataUser!!.id_pegawai)
+        myProfile.profile.observe(viewLifecycleOwner) {
+            hideLoading()
+            when (it) {
+                is NetworkResult.Success -> {
+                    hideLoading()
+
+                    val response = it.data!!.read
+                    response.map { data ->
+
+                        binding.include.namas.text = data.nama
+                        binding.include.jabatan.text = data.jabatan
+                        Glide.with(this)
+                            .load(Constants.PROFILE_USER + data.image)
+                            .into(binding.include.profileImage)
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+                    showLoading()
+                }
+
+                is NetworkResult.Error -> {
+                    hideLoading()
+                    handleApiError(it.message)
+                }
+            }
+
+        }
+    }
+
+    private fun hideLoading() {
+        progressDialog.dismiss()
+    }
+
+    private fun loadData() {
+        viewModel.statistic(dataUser!!.id_pegawai)
+        viewModel.statistic.observe(viewLifecycleOwner) { it ->
+            swipeRefreshLayout.isRefreshing = false
+            hideLoading()
+            when (it) {
+                is NetworkResult.Success -> {
+                    val response = it.data!!
+                    val data = response.pegawai.map { it.jumlah }
+                    statistic(data)
+                }
+
+                is NetworkResult.Error -> {
+                    Log.e("error", "${it.message}")
+                    handleApiError(it.message)
+                }
+
+                is NetworkResult.Loading -> {
+                    swipeRefreshLayout.isRefreshing = true
+                    showLoading()
+                }
+            }
+        }
+
+        viewModel.newsRequest()
+        viewModel.berita.observe(viewLifecycleOwner) {
+            swipeRefreshLayout.isRefreshing = false
+            progressDialog.dismiss()
+            when (it) {
+                is NetworkResult.Success -> {
+                    listImageSlider.clear()
+                    it.data?.let { it1 -> listImageSlider.addAll(it1) }
+                    sliderView.setSliderAdapter(sliderAdapter)
+                    sliderAdapter.renewItems(listImageSlider)
+                }
+                is NetworkResult.Error -> {
+                    handleApiError(it.message)
+                }
+
+                is NetworkResult.Loading -> {
+                    swipeRefreshLayout.isRefreshing = true
+                    showLoading()
+                }
+            }
+        }
     }
 
     private fun showExitConfirmationDialog() {
@@ -161,37 +259,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         lineChart = binding.chart1
         val mLineGraph = lineChart.xAxis
 
-        val date = ArrayList<String>()
-        date.add("Jan")
-        date.add("Feb")
-        date.add("Mar")
-        date.add("April")
-        date.add("Mei")
-        date.add("Juni")
-        date.add("Juli")
-        date.add("Agust")
-        date.add("Sept")
-        date.add("Okt")
-        date.add("Nov")
-        date.add("Des")
+//        val date = listOf("jan", "mar", "jun", "sept", "des")
+        val date = listOf(
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        )
 
         val values: ArrayList<Entry> = ArrayList()
-
-
         for ((index, value) in xData.withIndex()) {
             val valueX = index.toFloat() + 1
             val valueY = value.toFloat()
             values.add(Entry(valueX, valueY))
             Log.d("valuer", "value x is : $valueX /n value Y is : $valueY")
-            println("the element at ${index + 1} is $value")
         }
 
         for (i in xData) {
             Log.d("bulan ke - ", "${i.toFloat()}")
         }
 
+        lineChart.xAxis.textColor = ContextCompat.getColor(requireContext(), R.color.grey_text)
+        lineChart.axisLeft.textColor = ContextCompat.getColor(requireContext(), R.color.grey_text)
         val dataSets: ArrayList<ILineDataSet> = ArrayList()
-        val set1 = LineDataSet(values, "Statistik hadir pegawai")
+        val set1 = LineDataSet(values, "")
         mLineGraph.position = XAxis.XAxisPosition.BOTTOM
         dataSets.add(set1)
 
@@ -204,11 +303,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         set1.setCircleColor(Color.BLACK)
         set1.highLightColor = Color.rgb(255, 0, 0)
 
-
         lineChart.setHardwareAccelerationEnabled(false)
 
-
-        lineChart.xAxis.valueFormatter = IndexAxisValueFormatter(date)
+        lineChart.xAxis.valueFormatter = object : IndexAxisValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val index = (value - 1).toInt()
+                return if (index in date.indices) {
+                    date[index]
+                } else {
+                    ""
+                }
+            }
+        }
 
         val data = LineData(dataSets)
         val leftAxis = lineChart.axisLeft
@@ -222,7 +328,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         leftAxis.labelCount = 2
 
 //        true will shift the hole from line
-        lineChart.xAxis.setLabelCount(6, false)
+
+
+        lineChart.xAxis.setLabelCount(4, false)
 
         lineChart.data = (data)
         lineChart.animateX(2000)
@@ -247,5 +355,54 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         progressDialog.setCancelable(false)
         progressDialog.show()
     }
+
+    override fun onResume() {
+        super.onResume()
+        updateBadge()
+        registerReceiver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver()
+    }
+
+    private fun updateBadge() {
+        val count = getNotificationCount()
+        binding.include.badgeBeritaAcara.badgeValue = count!!
+    }
+
+    private fun registerReceiver() {
+        val intentFilter = IntentFilter("update_badge_action")
+        requireContext().registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    private fun unregisterReceiver() {
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "update_badge_action") {
+                val count = intent.getIntExtra("badge_count", 0)
+                updateBadgeValue(count)
+            }
+        }
+    }
+
+    private fun updateBadgeValue(count: Int) {
+        binding.include.badgeBeritaAcara.badgeValue = count
+    }
+
+    private fun deleteBadgeValue(){
+        binding.include.badgeBeritaAcara.setOnClickListener {
+            deleteNotificationCount()
+            updateBadge()
+        }
+    }
+
+
+
+
 }
 

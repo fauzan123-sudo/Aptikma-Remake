@@ -1,11 +1,11 @@
 package com.example.aptikma_remake.data.model
 
 data class LoginResponse(
-    val id: String,
-    val image: String,
-    val jabatan: String,
-    val message: String,
-    val nama: String,
-    val success: Int,
-    val username: String
+    var id_pegawai: String,
+    var image: String,
+    var jabatan: String,
+    var message: String,
+    var nama: String,
+    var success: Int,
+    var username: String
 )

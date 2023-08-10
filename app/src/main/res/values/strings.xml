@@ -5,4 +5,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="information">Jika ada data yang tidak sesui dengan data diri anda, silahkan hubungi Admin. Terima Kasih</string>
+    <string name="no_data">belum ada data</string>
+    <string name="breakingNews">Pengumuman</string>
+    <string name="pick_permission">Pilih jenis perizinan</string>
+    <string name="sick">sakit</string>
 </resources>

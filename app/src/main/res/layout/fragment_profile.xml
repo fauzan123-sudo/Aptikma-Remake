@@ -27,7 +27,7 @@
             app:layout_constraintGuide_percent="0.90" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+            android:id="@+id/constraintLayouts"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/round_bg"

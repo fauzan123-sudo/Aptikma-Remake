@@ -5,88 +5,135 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.data.adapter.AdapterPotongan
 import com.example.aptikma_remake.data.adapter.AdapterTunjangan
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentSallaryBinding
 import com.example.aptikma_remake.ui.base.BaseFragment
+import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
 import com.example.aptikma_remake.ui.viewModel.SallaryViewModel
-import com.example.aptikma_remake.util.TokenManager
+import com.example.aptikma_remake.util.Constants
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBinding::inflate) {
 
-    @Inject
-    lateinit var tokenManager: TokenManager
+    private val myProfile: ProfileViewModel by viewModels()
     private val viewModel: SallaryViewModel by viewModels()
     lateinit var adapter: AdapterTunjangan
-    private lateinit var adabter: AdapterPotongan
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var adapterCut: AdapterPotongan
     private lateinit var recyclerview: RecyclerView
     lateinit var recyclerView: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadData()
+        swipeRefreshLayout = binding.swipe
+
+        swipeRefreshLayout.setOnRefreshListener {
+            loadData()
+        }
+
+        topBar()
+
+    }
+
+    private fun topBar() {
+        myProfile.getProfileUser(dataUser!!.id_pegawai)
+        myProfile.profile.observe(viewLifecycleOwner) {
+            hideLoading()
+            when (it) {
+                is NetworkResult.Success -> {
+                    val response = it.data!!.read
+                    response.map { data ->
+                        binding.include.namas.text = data.nama
+                        binding.include.jabatan.text = data.jabatan
+                        Glide.with(this)
+                            .load(Constants.PROFILE_USER + data.image)
+                            .into(binding.include.profileImage)
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+                    showLoading()
+                }
+
+                is NetworkResult.Error -> {
+                    handleApiError(it.message)
+                }
+            }
+        }
+
+    }
+
+    private fun loadData() {
+
         recyclerView = binding.recPotongan
         recyclerview = binding.recTunjangan
 
         adapter = AdapterTunjangan()
-        adabter = AdapterPotongan()
+        adapterCut = AdapterPotongan()
 
         recyclerview.adapter = adapter
-        recyclerView.adapter = adabter
+        recyclerView.adapter = adapterCut
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerview.layoutManager = LinearLayoutManager(requireContext())
 
-        val idUser = tokenManager.getToken()
-        viewModel.getSallary(idUser!!)
+        val idUser = dataUser!!
+        viewModel.getSallary(idUser.id_pegawai)
         viewModel.sallary.observe(viewLifecycleOwner) { it ->
             Handler(Looper.getMainLooper()).postDelayed({
                 progressDialog.dismiss()
             }, 500)
+            swipeRefreshLayout.isRefreshing = false
             when (it) {
                 is NetworkResult.Success -> {
                     val response = it.data!!
                     if (response.status == 0) {
-                        handleApiError("belum ada data")
+                        handleApiError(getString(R.string.no_data))
                     } else {
                         val value = response.gaji_pokok
+                        val potongan = response.detail_tunjangan
+                        Log.d("potongan ", "$potongan")
                         val myNumber = NumberFormat.getNumberInstance(Locale.US)
                             .format(value)
                             .replace(",", ".")
                         binding.nominalGajiPokok.text = "Rp. $myNumber"
-                        val dataTunjangan = response.detail_tunjangan.map { it }
-                        val dataPotongan = response.detail_potongan.map { it }
-                        if (dataTunjangan.isEmpty()) {
+                        val allowanceSalary = response.detail_tunjangan.map { it }
+                        val salaryCuts = response.detail_potongan.map { it }
+                        if (allowanceSalary.isEmpty()) {
+                            Log.d("tunjangan kosong", "tunjangan sedang kosong")
                             binding.recTunjangan.visibility = View.GONE
                             binding.tvNoDataTunjangan.visibility = View.VISIBLE
                         } else {
                             binding.recTunjangan.visibility = View.VISIBLE
                             binding.tvNoDataTunjangan.visibility = View.GONE
-                            adapter.differ.submitList(dataTunjangan)
+                            Log.d("data tunjangan", "$allowanceSalary")
+                            adapter.differ.submitList(allowanceSalary)
                         }
-                        if (dataPotongan.isEmpty()) {
+                        if (salaryCuts.isEmpty()) {
                             binding.tvNoDataPotongan.visibility = View.VISIBLE
                             binding.recPotongan.visibility = View.GONE
                         } else {
                             binding.tvNoDataPotongan.visibility = View.GONE
                             binding.recPotongan.visibility = View.VISIBLE
-                            adabter.differ.submitList(dataPotongan)
+                            adapterCut.differ.submitList(salaryCuts)
                         }
-                        val valueGajiBersih = response.gaji_bersih
+                        val netSalary = response.gaji_bersih
                         val myNumbers = NumberFormat.getNumberInstance(Locale.US)
-                            .format(valueGajiBersih)
+                            .format(netSalary)
                             .replace(",", ".")
                         binding.gajiBersih.text = "Rp. $myNumbers"
 
@@ -100,7 +147,10 @@ class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBindi
                     Log.e("myErrorResponse", error)
                 }
 
-                is NetworkResult.Loading -> showLoading()
+                is NetworkResult.Loading -> {
+                    showLoading()
+                    swipeRefreshLayout.isRefreshing = true
+                }
             }
         }
     }
@@ -110,6 +160,10 @@ class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBindi
             ContextCompat.getColor(requireContext(), R.color.gradient_end_color)
         progressDialog.titleText = "Loading"
         progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun hideLoading() {
         progressDialog.show()
     }
 

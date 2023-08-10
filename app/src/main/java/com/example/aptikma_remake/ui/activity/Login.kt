@@ -13,18 +13,21 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.ActivityLoginBinding
 import com.example.aptikma_remake.ui.viewModel.AuthViewModel
-import com.example.aptikma_remake.util.Constants.TAG
-import com.example.aptikma_remake.util.TokenManager
+import com.example.aptikma_remake.util.Constants.LoginError
+import com.example.aptikma_remake.util.Constants.LoginTag
+//import com.example.aptikma_remake.util.Constants.TAG
+import com.example.aptikma_remake.util.getData
+import com.example.aptikma_remake.util.handleApiError
+import com.example.aptikma_remake.util.saveData
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class Login : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
 
-    @Inject
-    lateinit var tokenManager: TokenManager
+    private val dataUser = getData()
 
     private lateinit var binding: ActivityLoginBinding
 
@@ -33,22 +36,35 @@ class Login : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.d(TAG, "tokenya: ${tokenManager.getToken()}")
-
-        if (tokenManager.getToken() != null) {
+        if (dataUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
         binding.login.setOnClickListener {
             val userName = binding.username.text.toString()
             val password = binding.password.text.toString()
-            Log.d(TAG, "masuk $userName $password")
-            when {
-                userName.isEmpty() -> Toast.makeText(this, "Harap isi Username", Toast.LENGTH_SHORT)
-                    .show()
-                password.isEmpty() -> Toast.makeText(this, "Harap isi Password", Toast.LENGTH_SHORT)
-                    .show()
-                else -> viewModel.login(userName, password)
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    Log.d(LoginTag, token)
+                    when {
+                        userName.isEmpty() -> Toast.makeText(
+                            this,
+                            "Harap isi Username",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        password.isEmpty() -> Toast.makeText(
+                            this,
+                            "Harap isi Password",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        else -> viewModel.login(userName, password, token)
+                    }
+                } else {
+                    handleApiError("token tidak ditemukan")
+                }
             }
         }
 
@@ -81,19 +97,18 @@ class Login : AppCompatActivity() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-
-                    Log.d(TAG, "simpan : ${it.data}")
-                    Log.d(TAG, "simpan : ${it.data!!.id}")
-
-                    val check = it.data.success
+                    val data = it.data!!
+                    val check = data.success
                     val response = it.data.message
                     if (check == 0) {
                         binding.errorMessage.text = response
                         binding.hiddenText.visibility = View.VISIBLE
                         Log.d("wrong username or password", "redirect to login again")
                     } else {
-                        Log.d("successfully login", it.data.username)
-                        tokenManager.saveToken(it.data.id)
+                        Log.d("successfully login", data.username)
+                        Log.d("simpan data login", "$data")
+                        saveData(data)
+
                         startActivity(Intent(this, MainActivity::class.java))
                     }
 
@@ -102,8 +117,8 @@ class Login : AppCompatActivity() {
                     val error = it.message.toString()
                     binding.errorMessage.text = error
                     binding.hiddenText.visibility = View.VISIBLE
-//                    handleApiError(error)
-                    Log.d(TAG, (it.message.toString()))
+                    handleApiError(error)
+                    Log.d(LoginError, (error))
                 }
 
                 is NetworkResult.Loading -> {

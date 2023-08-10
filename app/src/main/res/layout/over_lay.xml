@@ -1,75 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/toolbar"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/dark">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/_17sdp"
+        android:transitionName="transitions" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="17dp"
-            android:layout_marginEnd="17dp"
-            android:layout_marginBottom="17dp"
-            android:src="@drawable/profil_circle"
-            android:transitionName="transitions" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/profile_image"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/namas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/profile_image"
-            android:orientation="vertical">
+            android:text="Fauzan Almaterzz"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/namas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fauzan Almaterzz"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/jabatan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/alex_brush"
-                android:text="Backend Android"
-                android:textColor="#E6E6E6"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                tools:ignore="SmallSp" />
-        </LinearLayout>
-
-        <ru.nikartm.support.ImageBadgeView
-            android:id="@+id/badgeBeritaAcara"
+        <TextView
+            android:id="@+id/jabatan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:padding="7dp"
-            app:ibv_badgeColor="#C10000"
-            app:ibv_badgeLimitValue="true"
-            app:ibv_badgeTextColor="#ffffff"
-            app:ibv_badgeTextSize="8sp"
-            app:ibv_badgeTextStyle="bold"
-            app:ibv_badgeValue="0"
-            app:ibv_fixedBadgeRadius="10dp"
-            app:ibv_maxBadgeValue="20"
-            app:srcCompat="@drawable/ic_notification" />
-    </RelativeLayout>
+            android:fontFamily="@font/alex_brush"
+            android:text="Backend Android"
+            android:textColor="#E6E6E6"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-</androidx.appcompat.widget.Toolbar>
+    <ru.nikartm.support.ImageBadgeView
+        android:id="@+id/badgeBeritaAcara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:padding="@dimen/_7sdp"
+        app:ibv_badgeColor="#C10000"
+        app:ibv_badgeLimitValue="true"
+        app:ibv_badgeTextColor="#ffffff"
+        app:ibv_badgeTextSize="@dimen/_8ssp"
+        app:ibv_badgeTextStyle="bold"
+        app:ibv_badgeValue="0"
+        app:ibv_fixedBadgeRadius="10dp"
+        app:ibv_maxBadgeValue="20"
+        app:srcCompat="@drawable/ic_notification" />
+</RelativeLayout>

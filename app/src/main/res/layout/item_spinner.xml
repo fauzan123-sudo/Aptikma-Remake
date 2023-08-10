@@ -1,11 +1,13 @@
 <TextView
-    android:layout_margin="10dp"
+    android:padding="@dimen/_10sdp"
     android:id="@+id/permissions"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textColor="@color/black"
-    android:textSize="14sp"
-    android:text="saya sedang sakit sekarang ya "
+    android:textSize="@dimen/_14ssp"
+    android:spinnerMode="dropdown"
+    android:prompt="@string/pick_permission"
+    android:text="@string/sick"
     android:textAlignment="textEnd"
     android:textStyle="bold"/>

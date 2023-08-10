@@ -1,8 +1,5 @@
 package com.example.aptikma_remake.data.repository
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import com.example.aptikma_remake.data.network.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,6 +10,22 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 
 abstract class BaseRepository {
+
+//    suspend fun <T> safeFirebaseCall(apiCall: suspend () -> T): NetworkResult<T> {
+//        return withContext(Dispatchers.IO) {
+//            try {
+//                NetworkResult.Success(apiCall())
+//            } catch (e: HttpException) {
+//                NetworkResult.Error(message = e.localizedMessage ?: "HTTP Error")
+//            } catch (e: IOException) {
+//                NetworkResult.Error(message = "Check Your Internet Connection")
+//            } catch (e: Exception) {
+//                NetworkResult.Error(message = e.localizedMessage ?: "Unknown Error")
+//            }
+//        }
+//    }
+
+
     suspend fun <T> safeApiCall(apiToBeCalled: suspend () -> Response<T>): NetworkResult<T> {
         return withContext(Dispatchers.IO) {
             try {

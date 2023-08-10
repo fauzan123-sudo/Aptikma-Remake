@@ -10,6 +10,7 @@
 
 
     //Text
+    <color name="grey_text">#A3A3A3</color>
     <color name="Dark_text">#263238</color>
     <color name="darkText">#37474F</color>
     <color name="text_solid">#A3A3A3</color>

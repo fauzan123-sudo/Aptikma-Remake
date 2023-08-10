@@ -21,17 +21,15 @@ import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentScanBinding
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.AttendanceViewModel
-import com.example.aptikma_remake.util.TokenManager
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::inflate) {
     private lateinit var codeScanner: CodeScanner
 
-    @Inject
-    lateinit var tokenManager: TokenManager
+//    @Inject
+//    lateinit var tokenManager: TokenManager
     private val viewModel: AttendanceViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,7 +57,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::infl
     }
 
     private fun scanUser(resultScan: String) {
-        viewModel.scanRequest(tokenManager.getToken()!!, resultScan, "1")
+        viewModel.scanRequest(dataUser!!.id_pegawai,resultScan, "1")
         viewModel.scanUser.observe(viewLifecycleOwner) {
             Handler(Looper.getMainLooper()).postDelayed({
                 progressDialog.dismiss()

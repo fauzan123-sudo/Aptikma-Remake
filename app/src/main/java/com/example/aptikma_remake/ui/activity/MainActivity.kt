@@ -2,6 +2,7 @@ package com.example.aptikma_remake.ui.activity
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +14,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.databinding.ActivityMainBinding
 import com.example.aptikma_remake.databinding.LayoutWarningDialogBinding
+import com.example.aptikma_remake.util.Constants
 import com.example.aptikma_remake.util.getData
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,6 +28,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d(Constants.LoginTag, token)
+                Log.d("fcm founded", "")
+
+            } else {
+                Log.d("no fcm founded", "")
+            }
+        }
 
 //        val toolbarBinding = OverLayBinding.inflate(layoutInflater, view.findViewById(R.id.constraintLayout), true)
 //        toolbarBinding.namas.text = "dataUser!!.nama"
@@ -38,10 +52,19 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.scanFragment) {
-                binding.bottomNavigationView.visibility = View.GONE
-            } else {
-                binding.bottomNavigationView.visibility = View.VISIBLE
+            when (destination.id) {
+                R.id.scanFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+                R.id.notificationFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+                R.id.profileFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+                else -> {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                }
             }
         }
 

@@ -8,6 +8,7 @@ import com.example.aptikma_remake.data.model.AttendanceList
 import com.example.aptikma_remake.data.model.AttendanceUser
 import com.example.aptikma_remake.data.model.ScanResponse
 import com.example.aptikma_remake.data.model.SpinnerList
+import com.example.aptikma_remake.data.model.permission.PermisionModel
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.data.repository.AttendanceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,6 +36,9 @@ class AttendanceViewModel @Inject constructor(private val repository: Attendance
     val scanUser: LiveData<NetworkResult<ScanResponse>>
         get() = _scaUserResponse
 
+    private val _permision = MutableLiveData<NetworkResult<PermisionModel>>()
+    val permission: LiveData<NetworkResult<PermisionModel>>
+        get() = _permision
 
     fun getAttendanceUser(id_pegawai: String) {
         viewModelScope.launch {
@@ -44,6 +48,34 @@ class AttendanceViewModel @Inject constructor(private val repository: Attendance
                 _attendanceUser.postValue(repository.attendanceUser(id_pegawai))
             } else {
                 _attendanceUser.postValue(NetworkResult.Error("No Internet Connection"))
+            }
+        }
+    }
+
+    fun getPermissionUser(
+        id_pegawai: String,
+        start: String,
+        end: String,
+        jenis: String,
+        keterangan: String,
+        tipe: String
+    ) {
+        viewModelScope.launch {
+            val connected = CheckInternet().check()
+            if (connected) {
+                _permision.postValue(NetworkResult.Loading())
+                _permision.postValue(
+                    repository.permission(
+                        id_pegawai,
+                        start,
+                        end,
+                        jenis,
+                        keterangan,
+                        tipe
+                    )
+                )
+            } else {
+                _permision.postValue(NetworkResult.Error("No Internet Connection"))
             }
         }
     }

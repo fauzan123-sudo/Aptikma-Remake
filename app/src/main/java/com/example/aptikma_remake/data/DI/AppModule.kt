@@ -2,6 +2,7 @@ package com.example.aptikma_remake.data.DI
 
 import com.example.aptikma_remake.data.network.*
 import com.example.aptikma_remake.util.Constants.BASE_URL
+import com.google.firebase.database.FirebaseDatabase
 //import com.example.kud.data.db.MyDatabase
 //import com.example.kud.data.network.AuthInterceptor
 //import com.example.kud.data.network.UserApi
@@ -39,6 +40,11 @@ object DatabaseModule {
 //            .writeTimeout(30, TimeUnit.SECONDS)
 //            .build()
 //    }
+
+    @Provides
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
+    }
 
     @Singleton
     @Provides
@@ -91,6 +97,12 @@ object DatabaseModule {
     @Provides
     fun sallary(retrofitBuilder: Builder, okHttpClient: OkHttpClient): SallaryApi {
         return retrofitBuilder.client(okHttpClient).build().create(SallaryApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun news(retrofitBuilder: Builder, okHttpClient: OkHttpClient): NewsApi {
+        return retrofitBuilder.client(okHttpClient).build().create(NewsApi::class.java)
     }
 
 //    @Singleton

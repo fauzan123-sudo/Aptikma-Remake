@@ -14,4 +14,6 @@ object Constants {
 
 //   Todo Firebase and notification
     const val notifyCount = "notification_count"
+    val Channel_ID = "channel_id"
+    val Channel_Name = "channel_name"
 }

@@ -5,13 +5,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.aptikma_remake.R
 import com.example.aptikma_remake.data.model.Notification
 import com.example.aptikma_remake.data.repository.NotificationRepository
-import com.example.aptikma_remake.ui.activity.MainActivity
 import com.example.aptikma_remake.util.Constants.notifyCount
 import com.example.aptikma_remake.util.extension.Resource
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -20,19 +22,23 @@ import io.paperdb.Paper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
+    lateinit var notificationManager: NotificationManager
+    lateinit var notificationChannel: NotificationChannel
     val dataUser = getData()
     private val myCoroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
-    private val repository = NotificationRepository()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         val title = remoteMessage.data["title"]
         val body = remoteMessage.data["body"]
+        val type = remoteMessage.data["tipe"]
         showNotification(title, body)
-        val notification = Notification(title, body, nip = dataUser!!.username)
+        val uidId = UUID.randomUUID().toString()
+        val notification =
+            Notification(id = uidId, title, body, nip = dataUser?.username ?: "", type = type ?: "")
         saveNotification(notification)
         saveNotificationCount()
     }
@@ -49,7 +55,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         Log.d("TAG", "Sedang dalam proses penambahan notifikasi")
                     }
                     is Resource.Error -> {
-                        Log.d("TAG", "Terjadi kesalahan saat menambahkan notifikasi: ${this.message}")
+                        Log.d(
+                            "TAG",
+                            "Terjadi kesalahan saat menambahkan notifikasi: ${this.message}"
+                        )
                     }
                 }
             }
@@ -67,180 +76,59 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String?, message: String?) {
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val intent = Intent(this, AfterNotification::class.java)
 
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val contentView = RemoteViews(packageName, R.layout.activity_after_notification)
+
+        val channelId = "my_channel_id"
+        val builder: NotificationCompat.Builder
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "channel_id"
-            val channelName = "channel_name"
-            val channel =
-                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
+            val notificationChannel =
+                NotificationChannel(channelId, "My Channel", NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.GREEN
+            notificationChannel.enableVibration(false)
+            notificationManager.createNotificationChannel(notificationChannel)
+
+            builder = NotificationCompat.Builder(this, channelId)
+                .setContent(contentView)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setLargeIcon(
+                    BitmapFactory.decodeResource(
+                        resources,
+                        R.drawable.ic_launcher_background
+                    )
+                )
+                .setContentIntent(pendingIntent)
+        } else {
+            builder = NotificationCompat.Builder(this)
+                .setContent(contentView)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setLargeIcon(
+                    BitmapFactory.decodeResource(
+                        resources,
+                        R.drawable.ic_launcher_background
+                    )
+                )
+                .setContentIntent(pendingIntent)
         }
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        notificationManager.notify(1234, builder.build())
 
-        val notificationBuilder = NotificationCompat.Builder(this, "channel_id")
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_logo)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-
-        notificationManager.notify(123, notificationBuilder.build())
     }
 }
 
-//class MyFirebaseMessagingService : FirebaseMessagingService() {
-//
-//    private val TAG = "MyFirebaseMessagingService"
-//    private val NOTIFICATION_CHANNEL_ID = "channel_id"
-//    private val NOTIFICATION_CHANNEL_NAME = "channel_name"
-//    private val NOTIFICATION_ID = 1001
-//
-//    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//        Log.d(TAG, "Pesan FCM diterima")
-//
-//        remoteMessage.notification?.let {
-//            val title = it.title
-//            val body = it.body
-//            showNotification(title, body)
-//        }
-//
-//        remoteMessage.data.isNotEmpty().let {
-//
-//            val nick = remoteMessage.data["key1"]
-//            val room = remoteMessage.data["key2"]
-//            showNotification(nick, room)
-//            Log.d(TAG, "Data Nick: $nick, Room: $room")
-//        }
-//    }
-//
-//    override fun onNewToken(token: String) {
-//        Log.d(TAG, "Token FCM diperbarui: $token")
-//    }
-//
-//    private fun showNotification(title: String?, message: String?) {
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel = NotificationChannel(
-//                NOTIFICATION_CHANNEL_ID,
-//                NOTIFICATION_CHANNEL_NAME,
-//                NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//
-//        val intent = Intent(this, MainActivity::class.java)
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//        val pendingIntent = PendingIntent.getActivity(
-//            this, 0, intent,
-//            PendingIntent.FLAG_ONE_SHOT
-//        )
-//
-//        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_notification)
-//            .setContentTitle(title)
-//            .setContentText(message)
-//            .setAutoCancel(true)
-//            .setContentIntent(pendingIntent)
-//
-//        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
-//    }
-//
-//}
-
-
-//class MyFirebaseMessagingService : FirebaseMessagingService() {
-//
-//    override fun onNewToken(token: String) {
-//        Log.d("TAG", "Refreshed token: $token")
-//    }
-//
-//    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//        super.onMessageReceived(remoteMessage)
-//        Toast.makeText(this, "notification apps", Toast.LENGTH_SHORT).show()
-//        NotificationHelper.handleNotification(remoteMessage)
-//
-//        val notification = remoteMessage.notification
-//
-//        if (notification != null) {
-//            val title = notification.title
-//            val body = notification.body
-//
-//            val intent = Intent(this, MainActivity::class.java)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//            val pendingIntent =
-//                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-//
-//            val channelId = "notification"
-//            val defaultSoundUri =
-//                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-//
-//            val notificationBuilder = NotificationCompat.Builder(this, channelId)
-//                .setSmallIcon(R.drawable.ic_notification)
-//                .setContentTitle(title)
-//                .setContentText(body)
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
-//                .setContentIntent(pendingIntent)
-//
-//            val notificationManager =
-//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                val channel = NotificationChannel(
-//                    channelId,
-//                    "Notifikasi",
-//                    NotificationManager.IMPORTANCE_DEFAULT
-//                )
-//                notificationManager.createNotificationChannel(channel)
-//            }
-//
-//            notificationManager.notify(0, notificationBuilder.build())
-//
-//        }
-//    }
-//
-//    private fun showNotification(title: String?, body: String?) {
-//
-//    }
-//
-//    private fun isAppInForeground(): Boolean {
-//
-//        return false
-//    }
-//}
-
-class NotificationHelper {
-    companion object {
-
-        const val UNREAD_COUNT = "unread_count"
-
-        fun handleNotification(remoteMessage: RemoteMessage) {
-            val unreadCount = Paper.book().read<Int>(UNREAD_COUNT, 0)!! + 1
-//            Paper.book().write(UNREAD_COUNT, unreadCount)
-        }
-
-        fun clearUnreadCount() {
-            Paper.book().write(UNREAD_COUNT, 0)
-        }
-
-        fun getUnreadCount(): Int? {
-            return Paper.book().read<Int>(UNREAD_COUNT, 0)
-        }
-
-
-    }
-}
 
 //class MyFirebaseInstanceIDService : FirebaseMessagingService() {
 //

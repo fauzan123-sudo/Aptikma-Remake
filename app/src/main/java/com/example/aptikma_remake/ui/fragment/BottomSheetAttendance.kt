@@ -80,6 +80,7 @@ class BottomSheetAttendance : BottomSheetDialogFragment() {
             }, 500)
             when (it) {
                 is NetworkResult.Success -> {
+
                     val dataFromApi = it.data!!
                     if (dataFromApi.isNotEmpty()) {
                         val spinnerData: MutableList<SpinnerList> = dataFromApi.map {
@@ -250,9 +251,7 @@ class BottomSheetAttendance : BottomSheetDialogFragment() {
                                 }
                             }
                         }
-
                     }
-
                 }
             } else {
                 binding.txtFrom.isEnabled = false
@@ -266,6 +265,10 @@ class BottomSheetAttendance : BottomSheetDialogFragment() {
             val finish = binding.txtUntil.text.toString()
             val selectedSpinnerItem = binding.spinnerType.selectedItem as SpinnerList
             val selectedId = selectedSpinnerItem.id_jenis_izin
+            val radioOption1 = binding.radioHour.isChecked
+            val radioOption2 = binding.radioDay.isChecked
+            val selectedRadioButtonValue =
+                if (radioOption1) "2" else if (radioOption2) "1" else "Tidak ada yang dipilih"
             if (selectedId == "" || selectedId.isEmpty()) {
                 Log.d("id spinner ", "harap pilih jenis izin!!")
             } else if (start == "-- : --") {
@@ -273,12 +276,45 @@ class BottomSheetAttendance : BottomSheetDialogFragment() {
             } else if (finish == "-- : --") {
                 Log.d("end perizinan", "harap isi akhir perizinan")
             } else {
-                Log.d("kirim data", "jenis izin $selectedId \n" +
-                        "mulai $start \n " +
-                        "berakhir $finish \n" +
-                        "dengan alasan $reason")
+                viewModel.getPermissionUser(
+                    id_pegawai = dataUser!!.id_pegawai,
+                    start = start,
+                    end = finish,
+                    keterangan = reason,
+                    jenis = selectedId,
+                    tipe = selectedRadioButtonValue
+                )
+
+                viewModel.permission.observe(viewLifecycleOwner){
+                   hideLoading()
+                    when(it){
+                        is NetworkResult.Success ->{
+                            dismiss()
+                        }
+
+                        is NetworkResult.Loading ->{
+                            showLoading()
+                        }
+
+                        is NetworkResult.Error ->{
+                            handleApiError(it.message)
+                        }
+                    }
+                }
+
+                Log.d(
+                    "kirim data", "jenis izin $selectedId \n" +
+                            "mulai $start \n " +
+                            "berakhir $finish \n" +
+                            "dengan alasan $reason \n" +
+                            "dan opsi terpilih $selectedRadioButtonValue "
+                )
             }
         }
+    }
+
+    private fun hideLoading() {
+        progressDialog.dismiss()
     }
 
     private fun convertStringToDate(dateStr: String): Date {

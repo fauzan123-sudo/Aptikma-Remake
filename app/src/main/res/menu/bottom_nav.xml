@@ -22,8 +22,8 @@
         android:icon="@drawable/ic_dollar"
         />
     <item
-        android:id="@+id/profileFragment"
-        android:title="Profile"
-        android:icon="@drawable/ic_girl"
+        android:id="@+id/newsFragment"
+        android:title="Berita"
+        android:icon="@drawable/globe"
         />
 </menu>

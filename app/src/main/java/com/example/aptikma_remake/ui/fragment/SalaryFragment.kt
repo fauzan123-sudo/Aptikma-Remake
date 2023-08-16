@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -47,7 +48,22 @@ class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBindi
         }
 
         topBar()
+        goToProfile()
+        goToNotification()
 
+    }
+
+    private fun goToNotification() {
+        binding.include.badgeBeritaAcara.setOnClickListener {
+            findNavController().navigate(R.id.action_salaryFragment_to_notificationFragment)
+        }
+    }
+
+
+    private fun goToProfile() {
+        binding.include.profileImage.setOnClickListener {
+            findNavController().navigate(R.id.action_salaryFragment_to_profileFragment)
+        }
     }
 
     private fun topBar() {

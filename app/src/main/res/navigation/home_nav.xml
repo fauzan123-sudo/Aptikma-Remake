@@ -9,12 +9,35 @@
         android:id="@+id/homeFragment"
         android:name="com.example.aptikma_remake.ui.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_bottomSheetAttendance"
+            app:destination="@id/bottomSheetAttendance" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/salaryFragment"
         android:name="com.example.aptikma_remake.ui.fragment.SalaryFragment"
         android:label="fragment_sallary"
-        tools:layout="@layout/fragment_sallary" />
+        tools:layout="@layout/fragment_sallary" >
+        <action
+            android:id="@+id/action_salaryFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_salaryFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_salaryFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/scanFragment"
         android:name="com.example.aptikma_remake.ui.fragment.ScanFragment"
@@ -35,6 +58,15 @@
         <action
             android:id="@+id/action_attendanceFragment_to_bottomSheetAttendance"
             app:destination="@id/bottomSheetAttendance" />
+        <action
+            android:id="@+id/action_attendanceFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_attendanceFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_attendanceFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/newsFragment"
@@ -54,10 +86,25 @@
         <action
             android:id="@+id/action_bottomSheetAttendance_to_attendanceFragment"
             app:destination="@id/attendanceFragment" />
+        <action
+            android:id="@+id/action_bottomSheetAttendance_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </dialog>
     <dialog
         android:id="@+id/itemListDialogFragment"
         android:name="com.example.aptikma_remake.ui.fragment.ItemListDialogFragment"
         android:label="fragment_item_list_dialog_list_dialog"
         tools:layout="@layout/fragment_item_list_dialog_list_dialog" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.aptikma_remake.ui.fragment.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_salaryFragment"
+            app:destination="@id/salaryFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+    </fragment>
 </navigation>

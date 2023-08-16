@@ -1,8 +1,8 @@
 package com.example.aptikma_remake.data.network
 
 import com.example.aptikma_remake.data.model.*
+import com.example.aptikma_remake.data.model.statistic.HomeModel
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -20,5 +20,12 @@ interface HomeApi {
         @Field("id_pegawai") id_pegawai:String
 //    @Body body: RequestBodies.IdPegawai
 ) : Response<StatisticResponse>
+
+    @FormUrlEncoded
+    @POST("statistic_pegawai")
+    suspend fun homeApi(
+        @Field("id_pegawai") id_pegawai:String
+//    @Body body: RequestBodies.IdPegawai
+    ) : Response<HomeModel>
 
 }

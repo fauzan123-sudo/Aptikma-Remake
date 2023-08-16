@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
@@ -42,16 +41,17 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
-import com.smarteist.autoimageslider.SliderAnimations
 import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val myProfile: ProfileViewModel by viewModels()
-    private val newsViewModel:HomeViewModel by viewModels()
+    private val newsViewModel: HomeViewModel by viewModels()
     private val newFireBase: NewsViewModel by viewModels()
 
     private lateinit var statisticAdapter: StatisticAdapter
@@ -75,12 +75,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         topBar()
         deleteBadgeValue()
+        goToNotification()
+        setUpPermission()
+        goToProfile()
 
-        recyclerview = binding.recyclerView
+//        recyclerview = binding.recyclerView
         adapter = NewsAdapter(requireContext())
-        recyclerview.adapter = adapter
-        recyclerview.layoutManager = LinearLayoutManager(requireContext())
-        newsHandler()
+//        recyclerview.adapter = adapter
+//        recyclerview.layoutManager = LinearLayoutManager(requireContext())
+//        newsHandler()
 
 //        recyclerView.apply {
 //            layoutManager = LinearLayoutManager(context)
@@ -96,15 +99,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 //        Statistic
         statisticAdapter = StatisticAdapter()
 
-//        Image Slider
-        sliderView = binding.imageSlider
-        sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
-        sliderView.setSliderAdapter(sliderAdapter)
-        sliderView.scrollTimeInSec = 3
-        sliderView.isAutoCycle = true
-        sliderView.startAutoCycle()
-        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM)
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
+////        Image Slider
+//        sliderView = binding.imageSlider
+//        sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
+//        sliderView.setSliderAdapter(sliderAdapter)
+//        sliderView.scrollTimeInSec = 3
+//        sliderView.isAutoCycle = true
+//        sliderView.startAutoCycle()
+//        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM)
+//        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
 
 
         val callback = object : OnBackPressedCallback(true) {
@@ -121,25 +124,43 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-    private fun newsHandler() {
-        newsViewModel.newsRequest()
-        newsViewModel.berita.observe(viewLifecycleOwner){
-            when(it){
-                is NetworkResult.Success ->{
-                    val respones = it.data!!
-                    adapter.differ.submitList(respones)
-                }
-
-                is NetworkResult.Loading ->{
-
-                }
-
-                is NetworkResult.Error ->{
-                    handleApiError(it.message)
-                }
-            }
+    private fun goToProfile() {
+        binding.include.profileImage.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
         }
     }
+
+    private fun setUpPermission() {
+        binding.btnPermission.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_bottomSheetAttendance)
+        }
+    }
+
+    private fun goToNotification() {
+        binding.include.badgeBeritaAcara.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
+        }
+    }
+
+//    private fun newsHandler() {
+//        newsViewModel.homeData(dataUser!!.id_pegawai)
+//        newsViewModel.home.observe(viewLifecycleOwner){
+//            when(it){
+//                is NetworkResult.Success ->{
+//                    val responses = it.data!!
+//                    adapter.differ.submitList(responses)
+//                }
+//
+//                is NetworkResult.Loading ->{
+//
+//                }
+//
+//                is NetworkResult.Error ->{
+//                    handleApiError(it.message)
+//                }
+//            }
+//        }
+//    }
 
     private fun topBar() {
         myProfile.getProfileUser(dataUser!!.id_pegawai)
@@ -178,8 +199,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun loadData() {
-        viewModel.statistic(dataUser!!.id_pegawai)
-        viewModel.statistic.observe(viewLifecycleOwner) { it ->
+        viewModel.homeData(dataUser!!.id_pegawai)
+        viewModel.home.observe(viewLifecycleOwner) { it ->
             swipeRefreshLayout.isRefreshing = false
             hideLoading()
             when (it) {
@@ -187,6 +208,58 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     val response = it.data!!
                     val data = response.pegawai.map { it.jumlah }
                     statistic(data)
+                    val existPermission = response.exist_izin
+                    val typePermission = response.tipe_izin
+                    val startPermission = response.durasi_izin?.mulai
+                    val finishPermission = response.durasi_izin?.selesai
+
+                    if (existPermission == 1) {
+                        if (typePermission == "1") {
+                            val dateFormatter =
+                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                            try {
+                                val startDate = dateFormatter.parse(startPermission)
+                                val endDate = dateFormatter.parse(finishPermission)
+
+                                val displayFormat =
+                                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                val startDateFormatted = startDate?.let { it1 ->
+                                    displayFormat.format(it1)
+                                }
+                                val endDateFormatted =
+                                    endDate?.let { it1 -> displayFormat.format(it1) }
+                                binding.txtStartPermission.text = "$startDateFormatted"
+                                binding.txtFinishPermission.text = "$endDateFormatted"
+                            } catch (e: ParseException) {
+                                Log.e("Parsing Error", "Error parsing date: ${e.message}")
+                            }
+                        } else if (typePermission == "2") {
+                            val dateFormatter =
+                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                            try {
+                                val startTime = dateFormatter.parse(startPermission)
+                                val endTime = dateFormatter.parse(finishPermission)
+
+                                val displayFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                val startTimeFormatted = startTime?.let { it1 ->
+                                    displayFormat.format(it1)
+                                }
+                                val endTimeFormatted =
+                                    endTime?.let { it1 -> displayFormat.format(it1) }
+                                binding.txtStartPermission.text = "$startTimeFormatted"
+                                binding.txtFinishPermission.text = "$endTimeFormatted"
+                            } catch (e: ParseException) {
+                                Log.e("Parsing Error", "Error parsing time: ${e.message}")
+                            }
+                        }
+                    } else if (existPermission == 0) {
+                        binding.txtStartPermission.text = "-"
+                        binding.txtFinishPermission.text = "-"
+                    } else {
+                        binding.txtStartPermission.text = "-"
+                        binding.txtFinishPermission.text = "-"
+
+                    }
                 }
 
                 is NetworkResult.Error -> {
@@ -201,27 +274,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
 
-        viewModel.newsRequest()
-        viewModel.berita.observe(viewLifecycleOwner) {
-            swipeRefreshLayout.isRefreshing = false
-            progressDialog.dismiss()
-            when (it) {
-                is NetworkResult.Success -> {
-                    listImageSlider.clear()
-                    it.data?.let { it1 -> listImageSlider.addAll(it1) }
-                    sliderView.setSliderAdapter(sliderAdapter)
-                    sliderAdapter.renewItems(listImageSlider)
-                }
-                is NetworkResult.Error -> {
-                    handleApiError(it.message)
-                }
-
-                is NetworkResult.Loading -> {
-                    swipeRefreshLayout.isRefreshing = true
-                    showLoading()
-                }
-            }
-        }
+//        viewModel.newsRequest()
+//        viewModel.berita.observe(viewLifecycleOwner) {
+//            swipeRefreshLayout.isRefreshing = false
+//            progressDialog.dismiss()
+//            when (it) {
+//                is NetworkResult.Success -> {
+//                    listImageSlider.clear()
+//                    it.data?.let { it1 -> listImageSlider.addAll(it1) }
+//                    sliderView.setSliderAdapter(sliderAdapter)
+//                    sliderAdapter.renewItems(listImageSlider)
+//                }
+//                is NetworkResult.Error -> {
+//                    handleApiError(it.message)
+//                }
+//
+//                is NetworkResult.Loading -> {
+//                    swipeRefreshLayout.isRefreshing = true
+//                    showLoading()
+//                }
+//            }
+//        }
     }
 
     private fun showExitConfirmationDialog() {
@@ -358,7 +431,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onResume() {
         super.onResume()
-        updateBadge()
+//        updateBadge()
         registerReceiver()
     }
 
@@ -394,14 +467,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.include.badgeBeritaAcara.badgeValue = count
     }
 
-    private fun deleteBadgeValue(){
+    private fun deleteBadgeValue() {
         binding.include.badgeBeritaAcara.setOnClickListener {
             deleteNotificationCount()
-            updateBadge()
+//            updateBadge()
         }
     }
-
-
 
 
 }

@@ -39,6 +39,8 @@ class AttendanceFragment :
 
         loadData()
         topBar()
+        goToProfile()
+        goToNotification()
 
         swipeRefreshLayout.setOnRefreshListener {
             loadData()
@@ -53,6 +55,18 @@ class AttendanceFragment :
         }
 
 
+    }
+
+    private fun goToNotification() {
+        binding.include.badgeBeritaAcara.setOnClickListener {
+            findNavController().navigate(R.id.action_attendanceFragment_to_notificationFragment)
+        }
+    }
+
+    private fun goToProfile() {
+        binding.include.profileImage.setOnClickListener {
+            findNavController().navigate(R.id.action_attendanceFragment_to_profileFragment)
+        }
     }
 
     private fun hideLoading() {

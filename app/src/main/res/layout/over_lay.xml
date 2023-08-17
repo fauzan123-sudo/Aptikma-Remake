@@ -63,6 +63,6 @@
         app:ibv_badgeTextStyle="bold"
         app:ibv_badgeValue="0"
         app:ibv_fixedBadgeRadius="10dp"
-        app:ibv_maxBadgeValue="20"
+        app:ibv_maxBadgeValue="200"
         app:srcCompat="@drawable/ic_notification" />
 </RelativeLayout>

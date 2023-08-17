@@ -7,11 +7,14 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.bumptech.glide.Glide
+import com.example.aptikma_remake.R
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentProfileBinding
 import com.example.aptikma_remake.ui.activity.Login
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
+import com.example.aptikma_remake.util.Constants
 import com.example.aptikma_remake.util.Helper
 import com.example.aptikma_remake.util.deleteData
 import com.example.aptikma_remake.util.handleApiError
@@ -71,6 +74,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         binding.tmpLhr.text = it.tempat_lahir
                         binding.tglLhr.text = Helper().formatDate(it.tgl_lahir)
                         binding.nip.text = it.nip
+                        Glide.with(requireContext())
+                            .load(Constants.PROFILE_USER + it.image)
+                            .error(R.drawable.image_not_found)
+                            .into(binding.imageUser)
                     }
                 }
 

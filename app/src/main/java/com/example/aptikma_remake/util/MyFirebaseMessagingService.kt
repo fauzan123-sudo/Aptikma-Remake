@@ -102,23 +102,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(notificationChannel)
 
             builder = NotificationCompat.Builder(this, channelId)
-                .setContent(contentView)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+//                .setContent(title)
+                .setSmallIcon(R.mipmap.ic_logo)
+                .setContentTitle(title)
+                .setContentText(message)
                 .setLargeIcon(
                     BitmapFactory.decodeResource(
                         resources,
-                        R.drawable.ic_launcher_background
+                        R.mipmap.ic_logo
                     )
                 )
                 .setContentIntent(pendingIntent)
         } else {
             builder = NotificationCompat.Builder(this)
                 .setContent(contentView)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_logo)
                 .setLargeIcon(
                     BitmapFactory.decodeResource(
                         resources,
-                        R.drawable.ic_launcher_background
+                        R.mipmap.ic_logo
                     )
                 )
                 .setContentIntent(pendingIntent)

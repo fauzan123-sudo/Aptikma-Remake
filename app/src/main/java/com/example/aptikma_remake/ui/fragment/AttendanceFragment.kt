@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +21,13 @@ import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentAttendanceBinding
 import com.example.aptikma_remake.ui.base.BaseFragment
 import com.example.aptikma_remake.ui.viewModel.AttendanceViewModel
+import com.example.aptikma_remake.ui.viewModel.NewsViewModel
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
 import com.example.aptikma_remake.util.Constants
+import com.example.aptikma_remake.util.extension.Resource
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AttendanceFragment :
@@ -32,6 +38,7 @@ class AttendanceFragment :
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val viewModel: AttendanceViewModel by viewModels()
     private lateinit var recyclerview: RecyclerView
+    private val newFireBase: NewsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +48,7 @@ class AttendanceFragment :
         topBar()
         goToProfile()
         goToNotification()
+        setBadgeFromFirebase()
 
         swipeRefreshLayout.setOnRefreshListener {
             loadData()
@@ -71,6 +79,34 @@ class AttendanceFragment :
 
     private fun hideLoading() {
         progressDialog.show()
+    }
+
+    private fun setBadgeFromFirebase() {
+        newFireBase.getNotificationsByNip(dataUser!!.username)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                newFireBase.notifications.collect { result ->
+                    hideLoading()
+                    when (result) {
+                        is Resource.Loading -> {
+                            showLoading()
+                            Log.d("on loading", "onViewCreated: ")
+                        }
+                        is Resource.Success -> {
+                            val notifications = result.data ?: emptyList()
+                            val unreadCount = notifications.count { !it.read }
+                            binding.include.badgeBeritaAcara.badgeValue = unreadCount
+
+                            Log.d("on Success", "${unreadCount}")
+                        }
+                        is Resource.Error -> {
+                            Log.d("on Error", "${result.message}")
+                            handleApiError(result.message)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun topBar() {

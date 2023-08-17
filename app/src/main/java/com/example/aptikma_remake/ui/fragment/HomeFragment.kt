@@ -12,7 +12,11 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -31,6 +35,7 @@ import com.example.aptikma_remake.ui.viewModel.NewsViewModel
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
 import com.example.aptikma_remake.util.Constants
 import com.example.aptikma_remake.util.deleteNotificationCount
+import com.example.aptikma_remake.util.extension.Resource
 import com.example.aptikma_remake.util.getNotificationCount
 import com.example.aptikma_remake.util.handleApiError
 import com.github.mikephil.charting.charts.LineChart
@@ -43,6 +48,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,10 +80,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         super.onViewCreated(view, savedInstanceState)
 
         topBar()
-        deleteBadgeValue()
+//        deleteBadgeValue()
         goToNotification()
         setUpPermission()
         goToProfile()
+        setBadgeFromFirebase()
+        loadData()
 
 //        recyclerview = binding.recyclerView
         adapter = NewsAdapter(requireContext())
@@ -92,7 +100,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         Log.d("top photo", Constants.PROFILE_USER + dataUser!!.image)
 
         swipeRefreshLayout = binding.swipe
-        loadData()
+
         swipeRefreshLayout.setOnRefreshListener {
             loadData()
         }
@@ -122,6 +130,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+
+    private fun setBadgeFromFirebase() {
+        newFireBase.getNotificationsByNip(dataUser!!.username)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                newFireBase.notifications.collect { result ->
+                    hideLoading()
+                    when (result) {
+                        is Resource.Loading -> {
+                            showLoading()
+                            Log.d("on loading", "onViewCreated: ")
+                        }
+                        is Resource.Success -> {
+                            val notifications = result.data ?: emptyList()
+                            val unreadCount = notifications.count { !it.read }
+                            binding.include.badgeBeritaAcara.badgeValue = unreadCount
+
+                            Log.d("on Success", "${unreadCount}")
+                        }
+                        is Resource.Error -> {
+                            Log.d("on Error", "${result.message}")
+                            handleApiError(result.message)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun goToProfile() {
@@ -213,53 +250,105 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     val startPermission = response.durasi_izin?.mulai
                     val finishPermission = response.durasi_izin?.selesai
 
-                    if (existPermission == 1) {
-                        if (typePermission == "1") {
-                            val dateFormatter =
-                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                            try {
-                                val startDate = dateFormatter.parse(startPermission)
-                                val endDate = dateFormatter.parse(finishPermission)
+                    val attendance = response.absen
 
-                                val displayFormat =
-                                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                                val startDateFormatted = startDate?.let { it1 ->
-                                    displayFormat.format(it1)
-                                }
-                                val endDateFormatted =
-                                    endDate?.let { it1 -> displayFormat.format(it1) }
-                                binding.txtStartPermission.text = "$startDateFormatted"
-                                binding.txtFinishPermission.text = "$endDateFormatted"
-                            } catch (e: ParseException) {
-                                Log.e("Parsing Error", "Error parsing date: ${e.message}")
+                    if (attendance != null) {
+                        binding.nullText.isVisible = false
+                        val rawDate = attendance.tanggal
+                        when (attendance.status) {
+                            "1" -> {
+                                binding.badges.text = "Masuk"
+                                binding.badges.setBackgroundResource(R.drawable.circle_green_button)
                             }
-                        } else if (typePermission == "2") {
-                            val dateFormatter =
-                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                            try {
-                                val startTime = dateFormatter.parse(startPermission)
-                                val endTime = dateFormatter.parse(finishPermission)
-
-                                val displayFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                                val startTimeFormatted = startTime?.let { it1 ->
-                                    displayFormat.format(it1)
-                                }
-                                val endTimeFormatted =
-                                    endTime?.let { it1 -> displayFormat.format(it1) }
-                                binding.txtStartPermission.text = "$startTimeFormatted"
-                                binding.txtFinishPermission.text = "$endTimeFormatted"
-                            } catch (e: ParseException) {
-                                Log.e("Parsing Error", "Error parsing time: ${e.message}")
+                            "2" -> {
+                                binding.badges.text = "Sakit"
+                                binding.badges.setBackgroundResource(R.drawable.circle_blue_button)
+                            }
+                            "3" -> {
+                                binding.badges.text = "Izin"
+                                binding.badges.setBackgroundResource(R.drawable.circle_yellow_button)
+                            }
+                            "4" -> {
+                                binding.badges.text = "Telat"
+                                binding.badges.setBackgroundResource(R.drawable.circle_red_button)
                             }
                         }
-                    } else if (existPermission == 0) {
-                        binding.txtStartPermission.text = "-"
-                        binding.txtFinishPermission.text = "-"
+
+                        val dateFormat =
+                            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        val date = dateFormat.parse(rawDate)
+
+                        val dayFormat = SimpleDateFormat("EEEE", Locale("id", "ID"))
+                        val dateFormatOutput = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+                        val clockFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+                        val dayOfWeek = dayFormat.format(date)
+                        val formattedDate = dateFormatOutput.format(date)
+                        val formattedClock = clockFormat.format(date)
+
+                        binding.tanggal.text = dayOfWeek.capitalize() + ", " + formattedDate
+                        binding.jam.text = formattedClock
+                    }
+                    else {
+                        binding.tanggal.isVisible = false
+                        binding.jam.isVisible = false
+                        binding.badges.isVisible = false
+                        binding.nullText.isVisible = true
+                    }
+
+                    if (existPermission != null) {
+                        if (existPermission == 1) {
+                            if (typePermission == "1") {
+                                val dateFormatter =
+                                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                try {
+                                    val startDate = dateFormatter.parse(startPermission)
+                                    val endDate = dateFormatter.parse(finishPermission)
+
+                                    val displayFormat =
+                                        SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                                    val startDateFormatted = startDate?.let { it1 ->
+                                        displayFormat.format(it1)
+                                    }
+                                    val endDateFormatted =
+                                        endDate?.let { it1 -> displayFormat.format(it1) }
+                                    binding.txtStartPermission.text = "$startDateFormatted"
+                                    binding.txtFinishPermission.text = "$endDateFormatted"
+                                } catch (e: ParseException) {
+                                    Log.e("Parsing Error", "Error parsing date: ${e.message}")
+                                }
+                            } else if (typePermission == "2") {
+                                val dateFormatter =
+                                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                try {
+                                    val startTime = dateFormatter.parse(startPermission)
+                                    val endTime = dateFormatter.parse(finishPermission)
+
+                                    val displayFormat =
+                                        SimpleDateFormat("HH:mm", Locale.getDefault())
+                                    val startTimeFormatted = startTime?.let { it1 ->
+                                        displayFormat.format(it1)
+                                    }
+                                    val endTimeFormatted =
+                                        endTime?.let { it1 -> displayFormat.format(it1) }
+                                    binding.txtStartPermission.text = "$startTimeFormatted"
+                                    binding.txtFinishPermission.text = "$endTimeFormatted"
+                                } catch (e: ParseException) {
+                                    Log.e("Parsing Error", "Error parsing time: ${e.message}")
+                                }
+                            }
+                        } else if (existPermission == 0) {
+                            binding.txtStartPermission.text = "-"
+                            binding.txtFinishPermission.text = "-"
+                        } else {
+                            binding.txtStartPermission.text = "-"
+                            binding.txtFinishPermission.text = "-"
+                        }
                     } else {
                         binding.txtStartPermission.text = "-"
                         binding.txtFinishPermission.text = "-"
-
                     }
+
                 }
 
                 is NetworkResult.Error -> {
@@ -442,7 +531,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun updateBadge() {
         val count = getNotificationCount()
-        binding.include.badgeBeritaAcara.badgeValue = count!!
+//        binding.include.badgeBeritaAcara.badgeValue = count!!
     }
 
     private fun registerReceiver() {
@@ -458,13 +547,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "update_badge_action") {
                 val count = intent.getIntExtra("badge_count", 0)
-                updateBadgeValue(count)
+//                updateBadgeValue(count)
             }
         }
     }
 
     private fun updateBadgeValue(count: Int) {
-        binding.include.badgeBeritaAcara.badgeValue = count
+//        binding.include.badgeBeritaAcara.badgeValue = count
     }
 
     private fun deleteBadgeValue() {

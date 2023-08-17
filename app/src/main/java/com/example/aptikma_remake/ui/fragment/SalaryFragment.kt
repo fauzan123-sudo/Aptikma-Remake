@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,17 +21,21 @@ import com.example.aptikma_remake.data.adapter.AdapterTunjangan
 import com.example.aptikma_remake.data.network.NetworkResult
 import com.example.aptikma_remake.databinding.FragmentSallaryBinding
 import com.example.aptikma_remake.ui.base.BaseFragment
+import com.example.aptikma_remake.ui.viewModel.NewsViewModel
 import com.example.aptikma_remake.ui.viewModel.ProfileViewModel
 import com.example.aptikma_remake.ui.viewModel.SallaryViewModel
 import com.example.aptikma_remake.util.Constants
+import com.example.aptikma_remake.util.extension.Resource
 import com.example.aptikma_remake.util.handleApiError
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 
 @AndroidEntryPoint
 class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBinding::inflate) {
 
+    private val newFireBase: NewsViewModel by viewModels()
     private val myProfile: ProfileViewModel by viewModels()
     private val viewModel: SallaryViewModel by viewModels()
     lateinit var adapter: AdapterTunjangan
@@ -41,6 +48,7 @@ class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBindi
         super.onViewCreated(view, savedInstanceState)
 
         loadData()
+        setBadgeFromFirebase()
         swipeRefreshLayout = binding.swipe
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -51,6 +59,34 @@ class SalaryFragment : BaseFragment<FragmentSallaryBinding>(FragmentSallaryBindi
         goToProfile()
         goToNotification()
 
+    }
+
+    private fun setBadgeFromFirebase() {
+        newFireBase.getNotificationsByNip(dataUser!!.username)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                newFireBase.notifications.collect { result ->
+                    hideLoading()
+                    when (result) {
+                        is Resource.Loading -> {
+                            showLoading()
+                            Log.d("on loading", "onViewCreated: ")
+                        }
+                        is Resource.Success -> {
+                            val notifications = result.data ?: emptyList()
+                            val unreadCount = notifications.count { !it.read }
+                            binding.include.badgeBeritaAcara.badgeValue = unreadCount
+
+                            Log.d("on Success", "$unreadCount")
+                        }
+                        is Resource.Error -> {
+                            Log.d("on Error", "${result.message}")
+                            handleApiError(result.message)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun goToNotification() {
